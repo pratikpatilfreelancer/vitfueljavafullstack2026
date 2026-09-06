@@ -150,4 +150,3 @@ Tests use H2 in-memory database (no MySQL required):
 - Email/SMS notices for students below 75% attendance
 - Biometric / QR-code based attendance capture
 - REST API layer + mobile app
-- Multi-institute (multi-tenant) support
