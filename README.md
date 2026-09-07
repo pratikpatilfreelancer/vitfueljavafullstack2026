@@ -150,3 +150,6 @@ This project followed the Waterfall model:
 3. Implementation — entity, repository, service, controller layers
 4. Testing — Postman for API testing, Selenium/Playwright for end-to-end testing
 5. Deployment — final working build
+
+# vitfueljavafullstack2026
+VIT full stack java repo CS and AIML project
