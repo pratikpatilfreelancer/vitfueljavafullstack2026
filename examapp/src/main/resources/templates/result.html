@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1>Exam Submitted</h1>
+    <p>Candidate: <span th:text="${attempt.candidateName}"></span></p>
+    <p>Score: <span th:text="${attempt.score}"></span></p>
+
+    <a th:href="@{/exams}" class="btn">Back to All Exams</a>
+</body>
+</html>

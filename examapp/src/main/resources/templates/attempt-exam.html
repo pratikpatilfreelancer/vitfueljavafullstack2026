@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Attempt Exam</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1 th:text="${exam.title}"></h1>
+    <p>Total Marks: <span th:text="${exam.totalMarks}"></span></p>
+
+    <form th:action="@{/exams/{id}/attempt(id=${exam.id})}" method="post">
+        <label>Your Name:</label>
+        <input type="text" name="candidateName" required /><br/><br/>
+
+        <div th:each="question : ${exam.questions}">
+            <p th:text="${question.questionText}"></p>
+
+            <div th:if="${question.getClass().getSimpleName() == 'MCQQuestion'}">
+                <div th:each="option, iterStat : ${question.options}">
+                    <input type="radio"
+                           th:name="'answer_' + ${question.id}"
+                           th:value="${iterStat.index}"
+                           th:id="${'q' + question.id + '_' + iterStat.index}" />
+                    <label class="option-label" th:for="${'q' + question.id + '_' + iterStat.index}" th:text="${option}"></label><br/>
+                </div>
+            </div>
+
+            <div th:if="${question.getClass().getSimpleName() == 'TrueFalseQuestion'}">
+                <input type="radio" th:name="'answer_' + ${question.id}" value="true" th:id="${'q' + question.id + '_true'}" />
+                <label class="option-label" th:for="${'q' + question.id + '_true'}">True</label><br/>
+                <input type="radio" th:name="'answer_' + ${question.id}" value="false" th:id="${'q' + question.id + '_false'}" />
+                <label class="option-label" th:for="${'q' + question.id + '_false'}">False</label><br/>
+            </div>
+            <hr/>
+        </div>
+
+        <button type="submit">Submit Exam</button>
+    </form>
+</body>
+</html>

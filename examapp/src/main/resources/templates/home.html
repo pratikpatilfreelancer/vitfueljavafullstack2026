@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Exam Evaluation System</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1>Online Exam Evaluation System</h1>
+    <p>Welcome. Choose an option below to get started.</p>
+
+    <div class="home-actions">
+        <a th:href="@{/exams}" class="btn">View All Exams</a>
+        <a th:href="@{/exams/create}" class="btn">Create New Exam</a>
+    </div>
+</body>
+</html>
