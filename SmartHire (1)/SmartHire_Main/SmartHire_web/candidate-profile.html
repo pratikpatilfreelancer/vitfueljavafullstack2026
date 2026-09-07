@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — My Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="shr-app">
+  <div id="shrSidebarMount"></div>
+  <main class="shr-main">
+    <div class="shr-topbar">
+      <div>
+        <h1 class="display-font">My profile</h1>
+        <p>This is what recruiters and the screening engine see.</p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div class="shr-card shr-card-pad">
+          <form id="profileForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Full name</label>
+                <input type="text" class="form-control" id="fullName" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phone" placeholder="9876543210">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Years of experience</label>
+                <input type="number" min="0" max="50" class="form-control" id="experienceYears">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Education</label>
+                <input type="text" class="form-control" id="education" placeholder="B.E. Computer Science, XYZ University">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Skills <span class="text-muted fw-normal">(comma separated — used for matching)</span></label>
+                <input type="text" class="form-control" id="skills" placeholder="Java, Spring Boot, MySQL, REST API, Git">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Resume text <span class="text-muted fw-normal">(plain text summary — also scanned for skills)</span></label>
+                <textarea class="form-control" id="resumeText" rows="6" placeholder="Paste a short plain-text summary of your resume…"></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-shr-primary mt-4 px-4"><i class="bi bi-check2 me-1"></i>Save profile</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="shr-card shr-card-pad">
+          <h6 class="fw-bold mb-3" style="font-size:.85rem;">How screening works</h6>
+          <div class="d-flex gap-2 mb-3">
+            <div style="width:34px;height:34px;border-radius:9px;background:var(--shr-teal-soft);color:var(--shr-teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-check2-square"></i></div>
+            <div class="small"><strong>70% — Skill overlap.</strong> How many of a job's required skills appear in your skills list or resume text.</div>
+          </div>
+          <div class="d-flex gap-2">
+            <div style="width:34px;height:34px;border-radius:9px;background:var(--shr-amber-soft);color:#a5731c;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="small"><strong>30% — Experience fit.</strong> How your years of experience compare to the job's minimum requirement.</div>
+          </div>
+          <hr>
+          <p class="small text-muted mb-0">Keeping your skills list specific and comma-separated (e.g. "Java, Spring Boot, MySQL") gives the most accurate score.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = mountShell("profile", "CANDIDATE");
+  if (user) {
+    const candidate = Repo.candidateByUserId(user.userId);
+    document.getElementById("fullName").value = user.fullName;
+    document.getElementById("email").value = user.email;
+    document.getElementById("phone").value = candidate.phone || "";
+    document.getElementById("experienceYears").value = candidate.experienceYears || 0;
+    document.getElementById("education").value = candidate.education || "";
+    document.getElementById("skills").value = candidate.skills || "";
+    document.getElementById("resumeText").value = candidate.resumeText || "";
+
+    document.getElementById("profileForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      Repo.updateCandidate(candidate.candidateId, {
+        phone: document.getElementById("phone").value.trim(),
+        experienceYears: parseInt(document.getElementById("experienceYears").value, 10) || 0,
+        education: document.getElementById("education").value.trim(),
+        skills: document.getElementById("skills").value.trim(),
+        resumeText: document.getElementById("resumeText").value.trim(),
+      });
+      toast("Profile saved. Match scores on existing applications were recalculated.", "success");
+    });
+  }
+</script>
+</body>
+</html>

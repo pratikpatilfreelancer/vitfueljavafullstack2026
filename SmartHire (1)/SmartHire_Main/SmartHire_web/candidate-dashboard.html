@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — Candidate Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="shr-app">
+  <div id="shrSidebarMount"></div>
+  <main class="shr-main">
+    <div class="shr-topbar">
+      <div>
+        <h1 id="greeting" class="display-font"></h1>
+        <p>Here's where your job search stands today.</p>
+      </div>
+      <a href="job-search.html" class="btn btn-shr-teal"><i class="bi bi-search me-1"></i> Find more jobs</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-card__icon" style="background:var(--shr-violet-soft); color:var(--shr-violet);"><i class="bi bi-send"></i></div>
+          <div><div class="stat-card__value" id="statApplied">0</div><div class="stat-card__label">Applications sent</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-card__icon" style="background:var(--shr-teal-soft); color:var(--shr-teal);"><i class="bi bi-star"></i></div>
+          <div><div class="stat-card__value" id="statShortlisted">0</div><div class="stat-card__label">Shortlisted</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-card__icon" style="background:var(--shr-amber-soft); color:#a5731c;"><i class="bi bi-calendar-check"></i></div>
+          <div><div class="stat-card__value" id="statInterviews">0</div><div class="stat-card__label">Interviews scheduled</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-card__icon" style="background:#DFF3E3; color:#1E8A4C;"><i class="bi bi-trophy"></i></div>
+          <div><div class="stat-card__value" id="statAvgScore">0</div><div class="stat-card__label">Avg. match score</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="shr-card shr-card-pad">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="display-font mb-0">Recent applications</h5>
+            <a href="application-status.html" class="small fw-semibold" style="color:var(--shr-teal);">View all →</a>
+          </div>
+          <div id="recentApps"></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="shr-card shr-card-pad h-100">
+          <h5 class="display-font mb-3">Profile strength</h5>
+          <div id="profileStrength"></div>
+          <hr>
+          <h6 class="fw-bold mb-2" style="font-size:.85rem;">Recommended for you</h6>
+          <div id="recommendedJobs"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = mountShell("dashboard", "CANDIDATE");
+  if (user) {
+    const candidate = Repo.candidateByUserId(user.userId);
+    document.getElementById("greeting").textContent = `Welcome back, ${user.fullName.split(" ")[0]}`;
+
+    const apps = Repo.applicationsByCandidate(candidate.candidateId);
+    document.getElementById("statApplied").textContent = apps.length;
+    document.getElementById("statShortlisted").textContent = apps.filter(a => a.status === "SHORTLISTED" || a.status === "HIRED").length;
+    document.getElementById("statInterviews").textContent = apps.filter(a => a.status === "INTERVIEW_SCHEDULED").length;
+    const avg = apps.length ? Math.round(apps.reduce((s, a) => s + a.matchScore, 0) / apps.length) : 0;
+    document.getElementById("statAvgScore").textContent = avg;
+
+    const recentHost = document.getElementById("recentApps");
+    if (!apps.length) {
+      recentHost.innerHTML = `<div class="empty-state"><i class="bi bi-inbox d-block mb-2"></i>No applications yet. <a href="job-search.html">Browse open roles</a>.</div>`;
+    } else {
+      recentHost.innerHTML = apps.slice().reverse().slice(0, 5).map(a => `
+        <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            ${scoreRing(a.matchScore, 46)}
+            <div>
+              <div class="fw-semibold">${escapeHtml(a.job.title)}</div>
+              <div class="text-muted small">${escapeHtml(a.job.location)} · Applied ${formatDate(a.appliedDate)}</div>
+            </div>
+          </div>
+          ${statusBadge(a.status)}
+        </div>`).join("");
+    }
+
+    // Profile strength
+    const fields = [candidate.phone, candidate.skills, candidate.education, candidate.experienceYears > 0 ? "x" : "", candidate.resumeText];
+    const filled = fields.filter(f => f && String(f).trim() !== "").length;
+    const pct = Math.round((filled / fields.length) * 100);
+    document.getElementById("profileStrength").innerHTML = `
+      <div class="d-flex justify-content-between small mb-1">
+        <span class="text-muted">Profile completeness</span><span class="fw-bold mono">${pct}%</span>
+      </div>
+      <div class="progress" style="height:8px; border-radius:6px;">
+        <div class="progress-bar" role="progressbar" style="width:${pct}%; background:var(--shr-teal);"></div>
+      </div>
+      ${pct < 100 ? `<a href="candidate-profile.html" class="small d-inline-block mt-2" style="color:var(--shr-teal);">Complete your profile to improve match scores →</a>` : `<div class="small text-muted mt-2">Your profile is complete. Nice work.</div>`}
+    `;
+
+    // recommended = open jobs not yet applied to, sorted by computed score desc
+    const appliedJobIds = new Set(apps.map(a => a.jobId));
+    const recs = Repo.openJobs()
+      .filter(j => !appliedJobIds.has(j.jobId))
+      .map(j => ({ job: j, score: ScreeningService.calculateMatchScore(candidate, j) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+    const recHost = document.getElementById("recommendedJobs");
+    recHost.innerHTML = recs.length ? recs.map(r => `
+      <div class="d-flex align-items-center justify-content-between py-2">
+        <div>
+          <div class="fw-semibold small">${escapeHtml(r.job.title)}</div>
+          <div class="text-muted" style="font-size:.76rem;">${escapeHtml(r.job.location)}</div>
+        </div>
+        ${scoreRing(r.score, 40)}
+      </div>`).join("") : `<div class="text-muted small">You've applied to every open role. Check back soon.</div>`;
+  }
+</script>
+</body>
+</html>

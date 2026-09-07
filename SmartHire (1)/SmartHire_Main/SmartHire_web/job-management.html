@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — Job Postings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="shr-app">
+  <div id="shrSidebarMount"></div>
+  <main class="shr-main">
+    <div class="shr-topbar">
+      <div>
+        <h1 class="display-font">Job postings</h1>
+        <p>Create, edit, and close the roles you're hiring for.</p>
+      </div>
+      <button class="btn btn-shr-teal" onclick="openJobModal()"><i class="bi bi-plus-lg me-1"></i> Post a job</button>
+    </div>
+
+    <div class="shr-card">
+      <div class="table-responsive">
+        <table class="table table-shr mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">Title</th>
+              <th>Location</th>
+              <th>Min. experience</th>
+              <th>Applicants</th>
+              <th>Status</th>
+              <th>Posted</th>
+              <th class="text-end pe-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="jobsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Job create/edit modal -->
+<div class="modal fade" id="jobModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h4 class="display-font fw-bold mb-0" id="jobModalTitle">Post a job</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="jobForm">
+          <input type="hidden" id="jobId">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label">Job title</label>
+              <input type="text" class="form-control" id="title" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Location</label>
+              <input type="text" class="form-control" id="location" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" id="description" rows="3" required></textarea>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Required skills <span class="text-muted fw-normal">(comma separated)</span></label>
+              <input type="text" class="form-control" id="requiredSkills" placeholder="Java, Spring Boot, MySQL" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Min. experience (years)</label>
+              <input type="number" class="form-control" id="minExperience" min="0" value="0">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-shr-primary mt-4 px-4"><i class="bi bi-check2 me-1"></i>Save job</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = mountShell("jobs", "RECRUITER");
+  let recruiter, jobModal;
+
+  if (user) {
+    recruiter = Repo.recruiterByUserId(user.userId);
+    jobModal = new bootstrap.Modal(document.getElementById("jobModal"));
+    renderJobs();
+    document.getElementById("jobForm").addEventListener("submit", saveJob);
+  }
+
+  function renderJobs() {
+    const jobs = Repo.jobsByRecruiter(recruiter.recruiterId);
+    const tbody = document.getElementById("jobsTbody");
+    if (!jobs.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="bi bi-briefcase d-block mb-2"></i>No jobs posted yet.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = jobs.slice().reverse().map(j => {
+      const count = Repo.applicationsByJob(j.jobId).length;
+      return `
+      <tr>
+        <td class="ps-4">
+          <div class="fw-semibold">${escapeHtml(j.title)}</div>
+          <div class="text-muted small">${ScreeningService.tokenizeSkills(j.requiredSkills).slice(0,3).join(", ")}</div>
+        </td>
+        <td>${escapeHtml(j.location)}</td>
+        <td>${j.minExperience} yrs</td>
+        <td><a href="applicant-management.html?jobId=${j.jobId}" class="fw-semibold" style="color:var(--shr-teal);">${count}</a></td>
+        <td>${statusBadge(j.status)}</td>
+        <td class="text-muted small">${formatDate(j.postedDate)}</td>
+        <td class="text-end pe-4">
+          <button class="btn btn-sm btn-outline-shr" onclick="editJob(${j.jobId})"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-shr" onclick="toggleStatus(${j.jobId})" title="Toggle open/closed"><i class="bi bi-toggle2-on"></i></button>
+          <button class="btn btn-sm btn-outline-shr" onclick="removeJob(${j.jobId})" title="Delete"><i class="bi bi-trash text-danger"></i></button>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  function openJobModal() {
+    document.getElementById("jobModalTitle").textContent = "Post a job";
+    document.getElementById("jobForm").reset();
+    document.getElementById("jobId").value = "";
+    jobModal.show();
+  }
+
+  function editJob(jobId) {
+    const j = Repo.jobById(jobId);
+    document.getElementById("jobModalTitle").textContent = "Edit job";
+    document.getElementById("jobId").value = j.jobId;
+    document.getElementById("title").value = j.title;
+    document.getElementById("location").value = j.location;
+    document.getElementById("description").value = j.description;
+    document.getElementById("requiredSkills").value = j.requiredSkills;
+    document.getElementById("minExperience").value = j.minExperience;
+    jobModal.show();
+  }
+
+  function saveJob(e) {
+    e.preventDefault();
+    const id = document.getElementById("jobId").value;
+    const data = {
+      title: document.getElementById("title").value.trim(),
+      location: document.getElementById("location").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      requiredSkills: document.getElementById("requiredSkills").value.trim(),
+      minExperience: parseInt(document.getElementById("minExperience").value, 10) || 0,
+    };
+    if (id) {
+      Repo.updateJob(parseInt(id, 10), data);
+      Repo.rescreenJob(parseInt(id, 10));
+      toast("Job updated and applicants re-screened.", "success");
+    } else {
+      Repo.createJob({ recruiterId: recruiter.recruiterId, ...data });
+      toast("Job posted.", "success");
+    }
+    jobModal.hide();
+    renderJobs();
+  }
+
+  function toggleStatus(jobId) {
+    const j = Repo.jobById(jobId);
+    Repo.updateJob(jobId, { status: j.status === "OPEN" ? "CLOSED" : "OPEN" });
+    renderJobs();
+  }
+
+  function removeJob(jobId) {
+    if (!confirm("Delete this job posting and all its applications? This can't be undone.")) return;
+    Repo.deleteJob(jobId);
+    renderJobs();
+    toast("Job deleted.", "secondary");
+  }
+</script>
+</body>
+</html>

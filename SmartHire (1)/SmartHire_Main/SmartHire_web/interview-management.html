@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — Interviews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="shr-app">
+  <div id="shrSidebarMount"></div>
+  <main class="shr-main">
+    <div class="shr-topbar">
+      <div>
+        <h1 class="display-font">Interviews</h1>
+        <p>Schedule interviews and record feedback.</p>
+      </div>
+      <button class="btn btn-shr-teal" onclick="openScheduleModal()"><i class="bi bi-plus-lg me-1"></i> Schedule interview</button>
+    </div>
+
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item"><button class="nav-link active" data-filter="all">All</button></li>
+      <li class="nav-item"><button class="nav-link" data-filter="SCHEDULED">Scheduled</button></li>
+      <li class="nav-item"><button class="nav-link" data-filter="COMPLETED">Completed</button></li>
+      <li class="nav-item"><button class="nav-link" data-filter="CANCELLED">Cancelled</button></li>
+    </ul>
+
+    <div id="interviewsHost" class="d-flex flex-column gap-3"></div>
+  </main>
+</div>
+
+<!-- Schedule modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h4 class="display-font fw-bold mb-0">Schedule interview</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="scheduleForm">
+          <div class="mb-3">
+            <label class="form-label">Applicant</label>
+            <select class="form-select" id="applicationSelect" required></select>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control" id="interviewDate" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Time</label>
+              <input type="time" class="form-control" id="interviewTime" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Mode</label>
+              <select class="form-select" id="mode">
+                <option value="ONLINE">Online</option>
+                <option value="IN_PERSON">In person</option>
+                <option value="PHONE">Phone</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-shr-primary mt-4 px-4"><i class="bi bi-calendar-check me-1"></i>Schedule</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h4 class="display-font fw-bold mb-0">Interview feedback</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="feedbackForm">
+          <input type="hidden" id="feedbackInterviewId">
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="feedbackStatus">
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rating</label>
+            <select class="form-select" id="feedbackRating">
+              <option value="0">Not rated</option>
+              <option value="1">★☆☆☆☆</option>
+              <option value="2">★★☆☆☆</option>
+              <option value="3">★★★☆☆</option>
+              <option value="4">★★★★☆</option>
+              <option value="5">★★★★★</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Feedback notes</label>
+            <textarea class="form-control" id="feedbackText" rows="4"></textarea>
+          </div>
+          <button type="submit" class="btn btn-shr-primary px-4"><i class="bi bi-check2 me-1"></i>Save feedback</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = mountShell("interviews", "RECRUITER");
+  let recruiter, scheduleModal, feedbackModal, activeFilter = "all";
+
+  if (user) {
+    recruiter = Repo.recruiterByUserId(user.userId);
+    scheduleModal = new bootstrap.Modal(document.getElementById("scheduleModal"));
+    feedbackModal = new bootstrap.Modal(document.getElementById("feedbackModal"));
+
+    document.querySelectorAll(".nav-link").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".nav-link").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        activeFilter = tab.dataset.filter;
+        render();
+      });
+    });
+
+    document.getElementById("scheduleForm").addEventListener("submit", submitSchedule);
+    document.getElementById("feedbackForm").addEventListener("submit", submitFeedback);
+
+    render();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("applicationId")) openScheduleModal(parseInt(params.get("applicationId"), 10));
+  }
+
+  function render() {
+    let interviews = Repo.interviewsByRecruiter(recruiter.recruiterId);
+    if (activeFilter !== "all") interviews = interviews.filter(i => i.status === activeFilter);
+    interviews.sort((a, b) => (a.interviewDate + a.interviewTime).localeCompare(b.interviewDate + b.interviewTime));
+
+    const host = document.getElementById("interviewsHost");
+    if (!interviews.length) {
+      host.innerHTML = `<div class="shr-card"><div class="empty-state"><i class="bi bi-calendar-check d-block mb-2"></i>No interviews found.</div></div>`;
+      return;
+    }
+    host.innerHTML = interviews.map(i => `
+      <div class="shr-card shr-card-pad d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-center" style="width:56px;">
+            <div class="fw-bold mono" style="font-size:1.1rem;">${i.interviewDate.slice(8,10)}</div>
+            <div class="text-muted" style="font-size:.7rem; text-transform:uppercase;">${new Date(i.interviewDate + "T00:00:00").toLocaleDateString(undefined,{month:"short"})}</div>
+          </div>
+          <div>
+            <div class="fw-semibold">${escapeHtml(i.application.candidateName)} <span class="text-muted fw-normal">— ${escapeHtml(i.application.job.title)}</span></div>
+            <div class="text-muted small"><i class="bi bi-clock me-1"></i>${i.interviewTime} · <i class="bi bi-camera-video me-1"></i>${i.mode.replace("_"," ")}</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          ${i.rating ? `<span class="small mono">${"★".repeat(i.rating)}${"☆".repeat(5-i.rating)}</span>` : ""}
+          ${statusBadge(i.status)}
+          <button class="btn btn-sm btn-outline-shr" onclick="openFeedback(${i.interviewId})"><i class="bi bi-pencil"></i></button>
+        </div>
+      </div>`).join("");
+  }
+
+  function openScheduleModal(preselectAppId) {
+    const apps = Repo.applicationsByRecruiter(recruiter.recruiterId).filter(a => a.status !== "REJECTED" && a.status !== "HIRED");
+    const select = document.getElementById("applicationSelect");
+    select.innerHTML = apps.map(a => `<option value="${a.applicationId}">${escapeHtml(a.candidateName)} — ${escapeHtml(a.job.title)}</option>`).join("");
+    if (preselectAppId) select.value = preselectAppId;
+    document.getElementById("interviewDate").value = "";
+    document.getElementById("interviewTime").value = "";
+    scheduleModal.show();
+  }
+
+  function submitSchedule(e) {
+    e.preventDefault();
+    const applicationId = parseInt(document.getElementById("applicationSelect").value, 10);
+    Repo.scheduleInterview(applicationId, {
+      interviewDate: document.getElementById("interviewDate").value,
+      interviewTime: document.getElementById("interviewTime").value,
+      mode: document.getElementById("mode").value,
+    });
+    scheduleModal.hide();
+    render();
+    toast("Interview scheduled.", "success");
+  }
+
+  function openFeedback(interviewId) {
+    const db = Repo.db();
+    const i = db.interviews.find(x => x.interviewId === interviewId);
+    document.getElementById("feedbackInterviewId").value = interviewId;
+    document.getElementById("feedbackStatus").value = i.status;
+    document.getElementById("feedbackRating").value = i.rating;
+    document.getElementById("feedbackText").value = i.feedback || "";
+    feedbackModal.show();
+  }
+
+  function submitFeedback(e) {
+    e.preventDefault();
+    const interviewId = parseInt(document.getElementById("feedbackInterviewId").value, 10);
+    Repo.updateInterview(interviewId, {
+      status: document.getElementById("feedbackStatus").value,
+      rating: parseInt(document.getElementById("feedbackRating").value, 10),
+      feedback: document.getElementById("feedbackText").value.trim(),
+    });
+    feedbackModal.hide();
+    render();
+    toast("Feedback saved.", "success");
+  }
+</script>
+</body>
+</html>

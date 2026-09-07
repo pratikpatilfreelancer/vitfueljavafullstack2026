@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — Create account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <div class="auth-visual__grid"></div>
+    <div class="auth-visual__content">
+      <div class="d-flex align-items-center gap-2 mb-5">
+        <span class="brand-mark"><i class="bi bi-diagram-3-fill"></i></span>
+        <span class="fs-4 display-font">Smart<b>Hire</b></span>
+      </div>
+      <span class="section-eyebrow" style="color:#7CE3CC;">Two roles, one pipeline</span>
+      <h1 class="display-font fw-bold mt-2" style="font-size:2.2rem; max-width:460px;">
+        Built for candidates and recruiters alike.
+      </h1>
+      <ul class="list-unstyled mt-4" style="color:rgba(255,255,255,.78); max-width:420px;">
+        <li class="d-flex gap-2 mb-3"><i class="bi bi-check-circle-fill mt-1" style="color:#7CE3CC;"></i> Candidates track match scores on every application</li>
+        <li class="d-flex gap-2 mb-3"><i class="bi bi-check-circle-fill mt-1" style="color:#7CE3CC;"></i> Recruiters rank applicants with rule-based screening</li>
+        <li class="d-flex gap-2 mb-3"><i class="bi bi-check-circle-fill mt-1" style="color:#7CE3CC;"></i> Interview scheduling and feedback in one place</li>
+      </ul>
+    </div>
+    <div class="auth-visual__content" style="font-size:.78rem; color:rgba(255,255,255,.45);">
+      © 2026 SmartHire — Resume Screening & Recruitment Management
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <h2 class="display-font fw-bold mb-1">Create your account</h2>
+      <p class="text-muted mb-4">Choose the role that fits you.</p>
+
+      <div id="regAlert" class="alert alert-danger py-2 small d-none"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="mb-3">
+          <label class="form-label">I am a...</label>
+          <div class="d-flex gap-2">
+            <input type="radio" class="btn-check" name="role" id="roleCandidate" value="CANDIDATE" checked>
+            <label class="btn btn-outline-shr w-50 py-2" for="roleCandidate"><i class="bi bi-person-badge me-1"></i> Candidate</label>
+            <input type="radio" class="btn-check" name="role" id="roleRecruiter" value="RECRUITER">
+            <label class="btn btn-outline-shr w-50 py-2" for="roleRecruiter"><i class="bi bi-briefcase me-1"></i> Recruiter</label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Full name</label>
+          <input type="text" class="form-control" id="fullName" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" minlength="4" required>
+        </div>
+        <button type="submit" class="btn btn-shr-primary w-100 py-2 mt-1">Create account</button>
+      </form>
+
+      <p class="text-center text-muted small mt-4 mb-0">
+        Already have an account? <a href="index.html" class="fw-semibold" style="color:var(--shr-teal);">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const alertBox = document.getElementById("regAlert");
+    alertBox.classList.add("d-none");
+    const role = document.querySelector('input[name="role"]:checked').value;
+    try {
+      const user = Repo.createUser({
+        username: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value,
+        role,
+        email: document.getElementById("email").value.trim(),
+        fullName: document.getElementById("fullName").value.trim(),
+      });
+      Session.set(user);
+      window.location.href = role === "RECRUITER" ? "recruiter-dashboard.html" : "candidate-dashboard.html";
+    } catch (err) {
+      alertBox.textContent = err.message;
+      alertBox.classList.remove("d-none");
+    }
+  });
+</script>
+</body>
+</html>
