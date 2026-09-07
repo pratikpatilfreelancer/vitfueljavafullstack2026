@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodExpress - Online Food Ordering</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <div class="logo">🍔 FoodExpress</div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#menu">Menu</a>
+        <a href="#orders">Orders</a>
+        <button onclick="showLogin()">Login</button>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h1>Delicious Food,<br>Delivered Fast.</h1>
+        <p>Order your favourite meals from FoodExpress and enjoy them at your doorstep.</p>
+        <button class="order-btn" onclick="scrollToMenu()">Order Now</button>
+    </div>
+</section>
+
+<section class="menu-section" id="menu">
+    <h2>Popular Menu</h2>
+    <p class="subtitle">Choose from our delicious selection</p>
+    <div id="foodContainer" class="food-container">
+        <p>Loading food items...</p>
+    </div>
+</section>
+
+<section class="orders-section" id="orders">
+    <h2>Your Orders</h2>
+    <div id="ordersContainer"><p>No orders yet.</p></div>
+</section>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLogin()">&times;</span>
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="loginMessage"></p>
+    </div>
+</div>
+
+<div id="cart" class="cart">
+    <h3>🛒 Your Cart</h3>
+    <div id="cartItems"></div>
+    <hr>
+    <strong>Total: ₹<span id="cartTotal">0</span></strong>
+    <button onclick="placeOrder()">Place Order</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
