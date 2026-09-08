@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Management System</title>
+    <!-- Bootstrap 5 CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-geo-alt-fill me-2"></i>Tourist Management System
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-4">
+                
+                <!-- Header row with Add Button -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="card-title fw-bold text-secondary mb-0">Registered Tourists</h3>
+                        <p class="text-muted small mb-0">Manage bookings, destinations, and packages</p>
+                    </div>
+                    <a th:href="@{/showNewTouristForm}" class="btn btn-primary px-3 py-2 fw-semibold">
+                        <i class="bi bi-person-plus-fill me-1"></i> Add Tourist
+                    </a>
+                </div>
+
+                <!-- Tourists Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-uppercase fs-7 text-muted">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Destination</th>
+                                <th>Days</th>
+                                <th>Package Price</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Thymeleaf loop over listTourists passed by Controller -->
+                            <tr th:each="tourist, iterStat : ${listTourists}">
+                                <td class="fw-bold" th:text="${iterStat.index + 1}"></td>
+                                <td th:text="${tourist.name}"></td>
+                                <td th:text="${tourist.email}"></td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info-emphasis px-2 py-1" th:text="${tourist.destination}"></span>
+                                </td>
+                                <td th:text="${tourist.daysOfStay} + ' Days'"></td>
+                                <td class="fw-semibold text-success" th:text="'$' + ${#numbers.formatDecimal(tourist.packagePrice, 1, 2)}"></td>
+                                <td class="text-center">
+                                    <a th:href="@{/showFormForUpdate/{id}(id=${tourist.id})}" class="btn btn-sm btn-outline-warning me-2">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a th:href="@{/deleteTourist/{id}(id=${tourist.id})}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Are you sure you want to delete this record?');">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            <!-- Display message if list is empty -->
+                            <tr th:if="${#lists.isEmpty(listTourists)}">
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    No tourists registered yet. Click "Add Tourist" to create one.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
