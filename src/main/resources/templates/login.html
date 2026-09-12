@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Attendance Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .login-card { 
+            width: 100%; 
+            max-width: 440px; 
+            padding: 35px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            background: #ffffff; 
+        }
+        .app-title {
+            font-weight: 700;
+            color: #1a252f;
+            letter-spacing: -0.5px;
+        }
+        .role-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .role-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <div class="fs-1">📋</div>
+            <h3 class="app-title mb-1">Attendance System</h3>
+            <p class="text-muted small">Sign in to access your portal</p>
+        </div>
+        
+        <div th:if="${param.error}" class="alert alert-danger text-center alert-dismissible fade show mb-3" role="alert">
+            <span>Invalid username or password</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success text-center alert-dismissible fade show mb-3" role="alert">
+            <span>Logged out successfully</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Role Selection Quick-Fill Buttons -->
+        <div class="mb-4">
+            <label class="form-label text-muted small fw-bold d-block text-center mb-2">QUICK SELECT LOGIN ROLE</label>
+            <div class="row g-2">
+                <div class="col-6">
+                    <button type="button" class="btn btn-outline-primary w-100 role-btn py-2 text-start" onclick="fillCredentials('admin', 'admin123', 'ADMIN')">
+                        <div class="fw-bold fs-7">👨‍💼 Admin</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">admin / admin123</div>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-outline-success w-100 role-btn py-2 text-start" onclick="fillCredentials('john.smith', 'teacher123', 'TEACHER')">
+                        <div class="fw-bold fs-7">👨‍🏫 Teacher</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">john.smith / teacher123</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label fw-semibold">Username</label>
+                <input type="text" id="username" name="username" class="form-control form-control-lg fs-6" placeholder="Enter username" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Password</label>
+                <input type="password" id="password" name="password" class="form-control form-control-lg fs-6" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-2 fw-semibold" id="loginBtn">Login</button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <span class="text-muted small">Need another teacher login?</span><br>
+            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 mt-1" onclick="fillCredentials('jane.doe', 'teacher123', 'TEACHER (Jane)')">
+                Login as Teacher: Jane Doe (jane.doe)
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fillCredentials(username, password, roleName) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            const btn = document.getElementById('loginBtn');
+            btn.textContent = 'Login as ' + roleName;
+            btn.classList.add('pulse');
+        }
+    </script>
+</body>
+</html>

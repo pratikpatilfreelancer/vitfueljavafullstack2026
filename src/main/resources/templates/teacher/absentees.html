@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mark Absentees - AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/teacher/dashboard}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Mark Absentees</li>
+        </ol>
+    </nav>
+
+    <!-- Success & Error Alerts -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Mark Absentees Only: <span th:text="${batch.batchCode}"></span> - <span th:text="${batch.subject}"></span></h2>
+        <a th:href="@{/teacher/dashboard}" class="btn btn-outline-secondary">← Back to Dashboard</a>
+    </div>
+
+    <!-- Date Selection Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/teacher/batches/{id}/attendance/absentees(id=${batch.id})}" method="get" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="datePicker" class="col-form-label font-weight-bold">Select Date:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" id="datePicker" name="date" class="form-control" th:value="${attendanceDate}" th:max="${today}" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">📅 Load Date</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- If Attendance Already Marked -->
+    <div th:if="${alreadyMarked}" class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>ℹ️ Attendance has already been marked for <strong><span th:text="${attendanceDate}"></span></strong>. You can view or update absentees below.</span>
+    </div>
+
+    <!-- Absentees Form -->
+    <div th:if="${students != null}">
+        <form th:action="@{/teacher/batches/{id}/attendance/absentees(id=${batch.id})}" method="post">
+            <input type="hidden" name="attendanceDate" th:value="${attendanceDate}">
+            
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <button type="button" class="btn btn-outline-warning btn-sm me-2" onclick="selectAll(true)">Select All (Absent)</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAll(false)">Deselect All</button>
+                </div>
+                <span class="text-muted fs-7">⚠️ Check ONLY students who are ABSENT. Unchecked students will be marked PRESENT.</span>
+            </div>
+
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Enrollment No</th>
+                        <th>Student Name</th>
+                        <th>Absent (Check if absent)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student, stat : ${students}">
+                        <td th:text="${stat.count}">1</td>
+                        <td th:text="${student.enrollmentNo}"></td>
+                        <td th:text="${student.name}"></td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input student-checkbox" 
+                                       type="checkbox" 
+                                       name="presentStudentIds" 
+                                       th:value="${student.id}">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(students)}">
+                        <td colspan="4" class="text-center text-muted py-4">No students enrolled in this batch.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-3" th:if="${!#lists.isEmpty(students)}">
+                <button type="submit" class="btn btn-warning btn-lg text-dark">💾 Save Absentees</button>
+                <a th:href="@{/teacher/dashboard}" class="btn btn-secondary btn-lg ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function selectAll(checked) {
+        document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = checked);
+    }
+</script>
+</body>
+</html>

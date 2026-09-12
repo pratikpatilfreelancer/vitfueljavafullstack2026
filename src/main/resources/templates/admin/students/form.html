@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${studentDto.id != null ? 'Edit Student' : 'Add Student'}">Student Form - AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="~{fragments/layout :: header}"></div>
+    
+    <div class="container mt-4">
+        <!-- Breadcrumb / Navigation -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/students}">Students</a></li>
+                <li class="breadcrumb-item active" th:text="${studentDto.id != null ? 'Edit Student' : 'Add Student'}">Form</li>
+            </ol>
+        </nav>
+
+        <h2 th:text="${studentDto.id != null ? 'Edit Student' : 'Add Student'}" class="mb-3"></h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{${studentDto.id != null ? '/admin/students/edit/' + studentDto.id : '/admin/students/new'}}" 
+                      th:object="${studentDto}" method="post">
+                    
+                    <input type="hidden" th:field="*{id}" th:if="${studentDto.id != null}">
+                    
+                    <div class="mb-3">
+                        <label for="enrollmentNo" class="form-label">Enrollment No</label>
+                        <input type="text" class="form-control" id="enrollmentNo" th:field="*{enrollmentNo}">
+                        <span th:if="${#fields.hasErrors('enrollmentNo')}" th:errors="*{enrollmentNo}" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}">
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="batchId" class="form-label">Batch</label>
+                        <select class="form-select" id="batchId" th:field="*{batchId}">
+                            <option value="">-- Select Batch --</option>
+                            <option th:each="batch : ${batches}" 
+                                    th:value="${batch.id}" 
+                                    th:text="${batch.batchCode + ' - ' + batch.subject}"></option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('batchId')}" th:errors="*{batchId}" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}">
+                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Student</button>
+                        <a th:href="@{/admin/students}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

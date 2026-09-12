@@ -1,0 +1,820 @@
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Concept: a digital ledger. Deep ink-navy for structure & chrome, an aged
+   paper card for the voucher itself, and stamp-colored ink for verdicts
+   (approved = green stamp, rejected = red stamp, pending = brass).
+--------------------------------------------------------------------------- */
+:root {
+  --ink: #1c2530;
+  --ink-soft: #2a3644;
+  --paper: #f7f2e7;
+  --paper-line: #e3d9c3;
+  --slate: #5b6472;
+  --slate-light: #8a93a1;
+  --brass: #a8792f;
+  --brass-light: #f0e2c4;
+  --stamp-green: #2f6b4f;
+  --stamp-green-bg: #e3efe8;
+  --stamp-red: #a33b3b;
+  --stamp-red-bg: #f3e3e1;
+  --stamp-slate: #4c5a6e;
+  --stamp-slate-bg: #e6eaf0;
+
+  --font-display: 'Georgia', 'Times New Roman', serif;
+  --font-body: Arial, Helvetica, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+
+  --radius: 4px;
+  --shadow-card: 0 1px 2px rgba(28, 37, 48, 0.08), 0 4px 16px rgba(28, 37, 48, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: #eef0f2;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------- */
+/* App shell                                                              */
+/* --------------------------------------------------------------------- */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 232px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: #dfe4ea;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+}
+
+.brand {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 16px;
+}
+
+.brand-mark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.brand-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--slate-light);
+  margin-top: 4px;
+}
+
+.nav-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--slate-light);
+  padding: 12px 20px 6px;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #c9d0d9;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background 0.12s;
+}
+
+.nav-link:hover { background: rgba(255,255,255,0.05); }
+
+.nav-link.active {
+  background: rgba(168, 121, 47, 0.16);
+  border-left-color: var(--brass);
+  color: #fff;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.user-chip {
+  font-size: 13px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.user-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--brass);
+}
+
+.logout-btn {
+  margin-top: 12px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #dfe4ea;
+  padding: 7px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  width: 100%;
+}
+.logout-btn:hover { border-color: var(--brass); color: #fff; }
+
+.main-area {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1200px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  color: var(--slate);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------- */
+/* Login                                                                  */
+/* --------------------------------------------------------------------- */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(168,121,47,0.10), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(168,121,47,0.08), transparent 40%);
+}
+
+.login-card {
+  width: 380px;
+  background: var(--paper);
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  padding: 36px 32px 28px;
+  position: relative;
+  border: 1px solid var(--paper-line);
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: 10px; right: 10px; bottom: 10px;
+  border: 1px dashed var(--paper-line);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.login-brand {
+  font-family: var(--font-display);
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.login-tagline {
+  text-align: center;
+  font-size: 12px;
+  color: var(--slate);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 28px;
+}
+
+.field-group { margin-bottom: 16px; }
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--slate);
+  margin-bottom: 6px;
+}
+
+.field-input, .field-select, .field-textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #c9bfa4;
+  border-radius: var(--radius);
+  background: #fffdf9;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  outline: 2px solid var(--brass);
+  outline-offset: 1px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--ink); color: #fff; width: 100%; }
+.btn-primary:hover { background: var(--ink-soft); }
+.btn-brass { background: var(--brass); color: #fff; }
+.btn-brass:hover { background: #93691f; }
+.btn-outline { background: transparent; border-color: #c9bfa4; color: var(--ink); }
+.btn-outline:hover { border-color: var(--brass); }
+.btn-danger { background: transparent; border-color: var(--stamp-red); color: var(--stamp-red); }
+.btn-danger:hover { background: var(--stamp-red-bg); }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.error-banner {
+  background: var(--stamp-red-bg);
+  color: var(--stamp-red);
+  border: 1px solid rgba(163,59,59,0.25);
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.demo-accounts {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--paper-line);
+  font-size: 12px;
+  color: var(--slate);
+}
+.demo-accounts code { background: #fffdf9; padding: 1px 4px; border-radius: 3px; }
+
+/* --------------------------------------------------------------------- */
+/* KPI cards                                                              */
+/* --------------------------------------------------------------------- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: #fff;
+  border: 1px solid #e2e6eb;
+  border-radius: 6px;
+  padding: 16px 18px;
+}
+
+.kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--slate);
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--ink);
+}
+
+.kpi-value.money::before { content: '\20B9 '; font-size: 18px; color: var(--slate); }
+
+/* --------------------------------------------------------------------- */
+/* Status stamp                                                           */
+/* --------------------------------------------------------------------- */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 1.5px solid currentColor;
+}
+.stamp-draft { color: var(--stamp-slate); background: var(--stamp-slate-bg); }
+.stamp-submitted { color: var(--brass); background: var(--brass-light); }
+.stamp-approved { color: var(--stamp-green); background: var(--stamp-green-bg); }
+.stamp-rejected { color: var(--stamp-red); background: var(--stamp-red-bg); }
+
+/* --------------------------------------------------------------------- */
+/* Panel + table (ledger)                                                 */
+/* --------------------------------------------------------------------- */
+.panel {
+  background: #fff;
+  border: 1px solid #e2e6eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fafbfc;
+  border-bottom: 1px solid #e2e6eb;
+}
+
+.filters-bar .field-input, .filters-bar .field-select {
+  width: auto;
+  min-width: 130px;
+  padding: 7px 9px;
+  font-size: 13px;
+}
+
+table.ledger {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.ledger th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--slate);
+  padding: 10px 20px;
+  background: #fafbfc;
+  border-bottom: 1px solid #e2e6eb;
+  cursor: pointer;
+  white-space: nowrap;
+}
+table.ledger th:hover { color: var(--brass); }
+
+table.ledger td {
+  padding: 12px 20px;
+  font-size: 13.5px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+table.ledger tbody tr:hover { background: #fbf9f4; }
+
+.voucher-number {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.amount-cell { font-family: var(--font-mono); }
+.amount-cell::before { content: '\20B9'; margin-right: 2px; color: var(--slate); }
+
+.empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--slate);
+}
+
+/* --------------------------------------------------------------------- */
+/* Voucher paper card (details view)                                      */
+/* --------------------------------------------------------------------- */
+.voucher-paper {
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  padding: 28px 30px;
+  position: relative;
+  box-shadow: var(--shadow-card);
+}
+
+.voucher-paper::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px; right: 8px; bottom: 8px;
+  border: 1px dashed var(--paper-line);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.voucher-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+
+.voucher-number-big {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.voucher-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--slate);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px 24px;
+  margin-bottom: 22px;
+}
+
+.field-block .voucher-label { margin-bottom: 3px; }
+.field-block .voucher-value { font-size: 14.5px; }
+.field-block .voucher-value.amount { font-family: var(--font-mono); font-size: 18px; font-weight: 700; }
+
+.section-divider {
+  border: none;
+  border-top: 1px dashed var(--paper-line);
+  margin: 22px 0;
+}
+
+.signature-row {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.signature-block {
+  text-align: center;
+}
+
+.signature-img {
+  height: 60px;
+  border-bottom: 1px solid var(--ink);
+  padding: 4px 20px;
+  background: #fffdf9;
+  object-fit: contain;
+}
+
+.signature-placeholder {
+  height: 60px;
+  width: 160px;
+  border-bottom: 1px solid var(--slate-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-light);
+  font-size: 12px;
+}
+
+.rejection-note {
+  background: var(--stamp-red-bg);
+  border: 1px solid rgba(163,59,59,0.3);
+  color: var(--stamp-red);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  margin-top: 18px;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------- */
+/* Forms                                                                  */
+/* --------------------------------------------------------------------- */
+.form-panel {
+  background: #fff;
+  border: 1px solid #e2e6eb;
+  border-radius: 6px;
+  padding: 26px 28px;
+  max-width: 640px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid .span-2 { grid-column: 1 / -1; }
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.helper-text {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 4px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,37,48,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 24px 26px;
+  width: 420px;
+  max-width: 90vw;
+}
+
+.loading-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--slate);
+}
+
+.link-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--slate);
+  text-decoration: none;
+}
+.link-back:hover { color: var(--brass); }
+
+/* --------------------------------------------------------------------- */
+/* Proof document upload                                                  */
+/* --------------------------------------------------------------------- */
+.proof-upload-area {
+  border: 2px dashed var(--paper-line);
+  border-radius: 6px;
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: #fffdf9;
+}
+
+.proof-upload-area:hover {
+  border-color: var(--brass);
+  background: var(--brass-light);
+}
+
+.proof-upload-area.has-file {
+  border-style: solid;
+  border-color: var(--paper-line);
+  cursor: default;
+  background: #fffdf9;
+}
+
+.proof-upload-area.has-file:hover {
+  background: #fffdf9;
+  border-color: var(--paper-line);
+}
+
+.proof-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--slate);
+  font-size: 14px;
+}
+
+.proof-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.proof-hint {
+  font-size: 11px;
+  color: var(--slate-light);
+}
+
+.proof-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.proof-thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--paper-line);
+}
+
+.proof-pdf-badge {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--stamp-red-bg);
+  border-radius: 4px;
+  border: 1px solid rgba(163, 59, 59, 0.2);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.proof-file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.proof-file-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.proof-file-size {
+  font-size: 12px;
+  color: var(--slate);
+}
+
+/* Proof display in voucher details */
+.proof-display {
+  margin-bottom: 4px;
+}
+
+.proof-display-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 12px;
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  background: #fffdf9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.proof-display-link:hover {
+  border-color: var(--brass);
+  box-shadow: 0 2px 8px rgba(168, 121, 47, 0.12);
+}
+
+.proof-display-img {
+  max-width: 280px;
+  max-height: 200px;
+  border-radius: 4px;
+  border: 1px solid var(--paper-line);
+  object-fit: contain;
+}
+
+.proof-view-text {
+  font-size: 11px;
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------- */
+/* Print styles                                                           */
+/* --------------------------------------------------------------------- */
+@media print {
+  /* Hide everything except the voucher */
+  .sidebar,
+  .link-back,
+  .action-row,
+  .section-divider + .action-row,
+  .btn,
+  .modal-backdrop,
+  .page-header,
+  .filters-bar,
+  .panel-header .btn {
+    display: none !important;
+  }
+
+  /* Reset layout */
+  .app-shell {
+    display: block;
+  }
+
+  .main-area {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  body {
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Voucher paper card styling for print */
+  .voucher-paper {
+    box-shadow: none;
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    padding: 24px 28px;
+    margin: 0;
+    page-break-inside: avoid;
+  }
+
+  .voucher-paper::before {
+    border-style: solid;
+    border-color: #ccc;
+  }
+
+  /* Make stamp colors print correctly */
+  .stamp {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Signature images print properly */
+  .signature-img {
+    max-height: 80px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Proof document print styles */
+  .proof-display-img {
+    max-width: 240px;
+    max-height: 160px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .proof-display-link {
+    border-color: #ccc;
+    box-shadow: none;
+  }
+
+  .proof-view-text {
+    display: none;
+  }
+
+  /* Print header */
+  .voucher-paper::after {
+    content: 'Expense Voucher — Ledger & Co.';
+    display: block;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 10px;
+    color: var(--slate);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid #ccc;
+  }
+}
