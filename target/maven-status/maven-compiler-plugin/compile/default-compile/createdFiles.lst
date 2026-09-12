@@ -49,3 +49,9 @@ com\foodorder\payment\UPIPayment.class
 com\foodorder\db\DatabaseConnection.class
 com\foodorder\ui\MenuPanel.class
 com\foodorder\ui\RegisterDialog.class
+com\example\tourist\controller\TouristController.class
+com\example\tourist\repository\TouristRepository.class
+com\example\tourist\TouristApplication.class
+com\example\tourist\service\TouristService.class
+com\example\tourist\service\TouristServiceImpl.class
+com\example\tourist\model\Tourist.class
