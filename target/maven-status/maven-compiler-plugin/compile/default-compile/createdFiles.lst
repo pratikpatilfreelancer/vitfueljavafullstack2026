@@ -1,0 +1,6 @@
+com\example\tourist\controller\TouristController.class
+com\example\tourist\repository\TouristRepository.class
+com\example\tourist\TouristApplication.class
+com\example\tourist\service\TouristService.class
+com\example\tourist\service\TouristServiceImpl.class
+com\example\tourist\model\Tourist.class
