@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire — Applicants & Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="shr-app">
+  <div id="shrSidebarMount"></div>
+  <main class="shr-main">
+    <div class="shr-topbar">
+      <div>
+        <h1 class="display-font">Applicants & screening</h1>
+        <p>Ranked by rule-based match score — 70% skills, 30% experience.</p>
+      </div>
+      <select id="jobFilter" class="form-select" style="max-width:280px;"></select>
+    </div>
+
+    <div id="applicantsHost"></div>
+  </main>
+</div>
+
+<!-- Applicant detail modal -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-body p-4" id="detailModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = mountShell("applicants", "RECRUITER");
+  let recruiter, detailModal;
+
+  if (user) {
+    recruiter = Repo.recruiterByUserId(user.userId);
+    detailModal = new bootstrap.Modal(document.getElementById("detailModal"));
+
+    const jobs = Repo.jobsByRecruiter(recruiter.recruiterId);
+    const params = new URLSearchParams(window.location.search);
+    const preselect = params.get("jobId");
+
+    const filter = document.getElementById("jobFilter");
+    filter.innerHTML = `<option value="all">All jobs</option>` + jobs.map(j => `<option value="${j.jobId}">${escapeHtml(j.title)}</option>`).join("");
+    if (preselect) filter.value = preselect;
+    filter.addEventListener("change", render);
+    render();
+  }
+
+  function render() {
+    const jobId = document.getElementById("jobFilter").value;
+    const jobs = Repo.jobsByRecruiter(recruiter.recruiterId);
+    const targetJobs = jobId === "all" ? jobs : jobs.filter(j => String(j.jobId) === jobId);
+    const host = document.getElementById("applicantsHost");
+
+    if (!targetJobs.length) {
+      host.innerHTML = `<div class="shr-card"><div class="empty-state"><i class="bi bi-briefcase d-block mb-2"></i>No jobs to show.</div></div>`;
+      return;
+    }
+
+    host.innerHTML = targetJobs.map(job => {
+      const apps = Repo.applicationsByJob(job.jobId).sort((a, b) => b.matchScore - a.matchScore);
+      return `
+      <div class="shr-card mb-4">
+        <div class="shr-card-pad pb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <h5 class="display-font mb-0">${escapeHtml(job.title)}</h5>
+            <div class="text-muted small">${escapeHtml(job.location)} · ${apps.length} applicant${apps.length === 1 ? "" : "s"}</div>
+          </div>
+          <button class="btn btn-outline-shr btn-sm" onclick="rescreen(${job.jobId})"><i class="bi bi-arrow-clockwise me-1"></i>Re-screen</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-shr mb-0">
+            <thead><tr>
+              <th class="ps-4">#</th><th>Candidate</th><th>Match</th><th>Skills overlap</th><th>Status</th><th class="text-end pe-4">Actions</th>
+            </tr></thead>
+            <tbody>
+              ${apps.length ? apps.map((a, idx) => `
+                <tr>
+                  <td class="ps-4"><span class="rank-number ${idx === 0 ? "top" : ""}">${idx + 1}</span></td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="shr-user__avatar" style="background:var(--shr-bg); color:var(--shr-navy); width:34px;height:34px;font-size:.72rem;">${initials(a.candidateName)}</div>
+                      <div>
+                        <div class="fw-semibold small">${escapeHtml(a.candidateName)}</div>
+                        <div class="text-muted" style="font-size:.74rem;">${a.candidate.experienceYears} yrs exp</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>${scoreRing(a.matchScore, 44)}</td>
+                  <td class="small text-muted" style="max-width:220px;">${escapeHtml((a.candidate.skills || "").split(",").slice(0,3).join(", "))}</td>
+                  <td>${statusBadge(a.status)}</td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-outline-shr" onclick="showDetail(${a.applicationId})">Review</button>
+                  </td>
+                </tr>`).join("") : `<tr><td colspan="6"><div class="empty-state py-3"><i class="bi bi-people d-block mb-2"></i>No applicants yet for this job.</div></td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  function rescreen(jobId) {
+    Repo.rescreenJob(jobId);
+    render();
+    toast("Applicants re-screened against current job requirements.", "success");
+  }
+
+  function showDetail(applicationId) {
+    const a = Repo.applicationById(applicationId);
+    const skillMatch = Math.round(ScreeningService.calculateSkillMatch(a.candidate, a.job));
+    const expMatch = Math.round(ScreeningService.calculateExperienceMatch(a.candidate, a.job));
+    const required = ScreeningService.tokenizeSkills(a.job.requiredSkills);
+    const profile = ((a.candidate.skills || "") + " " + (a.candidate.resumeText || "")).toLowerCase();
+
+    document.getElementById("detailModalBody").innerHTML = `
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="shr-user__avatar" style="background:var(--shr-bg); color:var(--shr-navy); width:52px;height:52px;font-size:1rem;">${initials(a.candidateName)}</div>
+          <div>
+            <h4 class="display-font fw-bold mb-0">${escapeHtml(a.candidateName)}</h4>
+            <div class="text-muted small">Applied to ${escapeHtml(a.job.title)} · ${formatDate(a.appliedDate)}</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="shr-card shr-card-pad d-flex align-items-center gap-3 mb-3" style="background:var(--shr-bg); border:none;">
+        ${scoreRing(a.matchScore, 64)}
+        <div>
+          <div class="fw-bold">${ScreeningService.scoreLabel(a.matchScore)}</div>
+          <div class="small text-muted">Skill overlap ${skillMatch}% (70% weight) · Experience fit ${expMatch}% (30% weight)</div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="small fw-bold text-muted mb-1">EDUCATION</div>
+          <div class="small">${escapeHtml(a.candidate.education || "—")}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="small fw-bold text-muted mb-1">EXPERIENCE</div>
+          <div class="small">${a.candidate.experienceYears} years · requires ${a.job.minExperience}+</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="small fw-bold text-muted mb-1">REQUIRED SKILLS MATCHED</div>
+        ${required.map(s => `<span class="skill-pill" style="${profile.includes(s) ? "" : "background:var(--shr-coral-soft); color:var(--shr-coral);"}">${profile.includes(s) ? "✓ " : "✕ "}${escapeHtml(s)}</span>`).join("")}
+      </div>
+
+      <div class="mb-4">
+        <div class="small fw-bold text-muted mb-1">RESUME TEXT</div>
+        <div class="small text-muted" style="max-height:120px; overflow:auto;">${escapeHtml(a.candidate.resumeText || "No resume text provided.")}</div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-sm" style="background:var(--shr-teal-soft); color:var(--shr-teal);" onclick="setStatus(${a.applicationId}, 'SHORTLISTED')">Shortlist</button>
+        <button class="btn btn-sm" style="background:var(--shr-amber-soft); color:#a5731c;" onclick="openInterviewFromModal(${a.applicationId})">Schedule interview</button>
+        <button class="btn btn-sm" style="background:#DFF3E3; color:#1E8A4C;" onclick="setStatus(${a.applicationId}, 'HIRED')">Mark hired</button>
+        <button class="btn btn-sm" style="background:var(--shr-coral-soft); color:var(--shr-coral);" onclick="setStatus(${a.applicationId}, 'REJECTED')">Reject</button>
+      </div>
+    `;
+    detailModal.show();
+  }
+
+  function setStatus(applicationId, status) {
+    Repo.updateApplicationStatus(applicationId, status);
+    detailModal.hide();
+    render();
+    toast(`Application marked ${STATUS_META[status].label}.`, "success");
+  }
+
+  function openInterviewFromModal(applicationId) {
+    detailModal.hide();
+    window.location.href = `interview-management.html?applicationId=${applicationId}`;
+  }
+</script>
+</body>
+</html>
