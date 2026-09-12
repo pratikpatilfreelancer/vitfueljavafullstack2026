@@ -25,3 +25,22 @@ target/
 # virtual machine crash logs
 hs_err_pid*
 replay_pid*
+
+# Maven build output
+target/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Application config (contains local DB password)
+application.properties
+replay_pid*

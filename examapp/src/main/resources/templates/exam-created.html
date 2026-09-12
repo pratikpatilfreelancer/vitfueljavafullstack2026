@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Created</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1>Exam Created Successfully</h1>
+    <p>Title: <span th:text="${exam.title}"></span></p>
+    <p>Exam ID: <span th:text="${exam.id}"></span></p>
+
+    <a th:href="@{/exams}" class="btn">View All Exams</a>
+    <a th:href="@{/exams/{id}/questions(id=${exam.id})}" class="btn">Add Questions to This Exam</a>
+</body>
+</html>

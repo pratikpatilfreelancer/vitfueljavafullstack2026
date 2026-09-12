@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Exam</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1>Create a New Exam</h1>
+    <a th:href="@{/}" class="back-link">&larr; Home</a>
+
+    <form th:action="@{/exams/create}" method="post">
+        <label>Title:</label>
+        <input type="text" name="title" required /><br/>
+
+        <label>Total Marks:</label>
+        <input type="number" name="totalMarks" required /><br/>
+
+        <label>Created By:</label>
+        <input type="text" name="createdBy" required /><br/>
+
+        <button type="submit">Create Exam</button>
+    </form>
+</body>
+</html>
