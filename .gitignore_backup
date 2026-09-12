@@ -1,0 +1,20 @@
+# Compiled class files
+bin/
+*.class
+
+# Data generated at runtime (serialized inventory + logs)
+data/*.ser
+data/*.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build helper
+sources.txt
