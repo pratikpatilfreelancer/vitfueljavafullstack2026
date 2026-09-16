@@ -1,0 +1,227 @@
+{
+  "info": {
+    "_postman_id": "ams-attendance-system-collection",
+    "name": "AMS - Attendance Management System REST API",
+    "description": "Complete Postman API Collection for Attendance Management System (Spring Boot)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Auth - User Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Authenticate admin or teacher user and get status"
+      }
+    },
+    {
+      "name": "2. Admin - Get All Teachers",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/admin/teachers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "teachers"]
+        },
+        "description": "Get list of all teachers"
+      }
+    },
+    {
+      "name": "3. Admin - Create Teacher",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Robert Miller\",\n  \"username\": \"robert.m\",\n  \"password\": \"teacher123\",\n  \"email\": \"robert@ams.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/admin/teachers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "teachers"]
+        },
+        "description": "Create a new teacher"
+      }
+    },
+    {
+      "name": "4. Admin - Get All Students",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/admin/students",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "students"]
+        },
+        "description": "Get list of all students"
+      }
+    },
+    {
+      "name": "5. Admin - Create Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"enrollmentNo\": \"STU010\",\n  \"name\": \"Kevin Vance\",\n  \"batchId\": 1,\n  \"email\": \"kevin@example.com\",\n  \"phone\": \"9876543219\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/admin/students",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "students"]
+        },
+        "description": "Create a new student in Batch 1"
+      }
+    },
+    {
+      "name": "6. Admin - Get All Batches",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/admin/batches",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "batches"]
+        },
+        "description": "Get list of all batches"
+      }
+    },
+    {
+      "name": "7. Admin - Create Batch",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"batchCode\": \"CHEM101\",\n  \"subject\": \"Organic Chemistry\",\n  \"teacherId\": 2,\n  \"batchDays\": \"MWF\",\n  \"batchTiming\": \"10:00-12:00\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/admin/batches",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "admin", "batches"]
+        },
+        "description": "Create a new batch"
+      }
+    },
+    {
+      "name": "8. Teacher - Mark Attendance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"batchId\": 1,\n  \"attendanceDate\": \"2026-09-02\",\n  \"presentStudentIds\": [1, 2, 3, 4]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/teacher/attendance?username=john.smith",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "teacher", "attendance"],
+          "query": [
+            {
+              "key": "username",
+              "value": "john.smith"
+            }
+          ]
+        },
+        "description": "Mark attendance for Batch 1"
+      }
+    },
+    {
+      "name": "9. Teacher - Get Attendance for Date",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teacher/attendance/1?date=2026-09-02",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "teacher", "attendance", "1"],
+          "query": [
+            {
+              "key": "date",
+              "value": "2026-09-02"
+            }
+          ]
+        },
+        "description": "Get attendance records for Batch 1 on specific date"
+      }
+    },
+    {
+      "name": "10. Reports - Get Attendance Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/reports?batchId=1&reportType=percentage",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "reports"],
+          "query": [
+            {
+              "key": "batchId",
+              "value": "1"
+            },
+            {
+              "key": "reportType",
+              "value": "percentage"
+            }
+          ]
+        },
+        "description": "Get attendance statistics for Batch 1 with <75% notice flags"
+      }
+    }
+  ]
+}

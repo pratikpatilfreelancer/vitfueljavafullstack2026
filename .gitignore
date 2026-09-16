@@ -19,11 +19,35 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Maven build directory
+target/
+
+# virtual machine crash logs
 hs_err_pid*
 replay_pid*
 
+<<<<<<< HEAD
 target/
 node_modules/
 .env
 .DS_Store
+=======
+# Maven build output
+target/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Application config (contains local DB password)
+application.properties
+replay_pid*
+>>>>>>> 1a891d395de20d1d764cb9e03ca74d214ff23a66

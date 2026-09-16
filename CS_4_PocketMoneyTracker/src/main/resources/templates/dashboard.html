@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PocketTrack - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/transactions/add}">Add Transaction</a>
+    <a th:href="@{/savings}">Savings</a>
+</div>
+
+<div class="container">
+    <h1>Pocket Money Tracker</h1>
+    <p th:text="'Month: ' + ${month} + ' / ' + ${year}"></p>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Monthly Budget</h3>
+            <div class="amount" th:text="'₹ ' + ${budget.amount}">₹ 0.00</div>
+        </div>
+
+        <div class="card">
+            <h3>Total Spent</h3>
+            <div class="amount expense" th:text="'₹ ' + ${totalSpent}">₹ 0.00</div>
+        </div>
+
+        <div class="card">
+            <h3>Extra Income</h3>
+            <div class="amount income" th:text="'₹ ' + ${extraIncome}">₹ 0.00</div>
+        </div>
+
+        <div class="card">
+            <h3>Remaining Balance</h3>
+            <div class="amount" th:text="'₹ ' + ${remainingBalance}">₹ 0.00</div>
+        </div>
+
+        <div class="card">
+            <h3>Savings</h3>
+            <div class="amount" th:text="'₹ ' + ${savingsBalance}">₹ 0.00</div>
+        </div>
+    </div>
+
+    <h2>Set Monthly Budget</h2>
+
+    <form th:action="@{/budget/set}" method="post">
+        <div class="form-group">
+            <label for="month">Month</label>
+            <input type="number" id="month" name="month" min="1" max="12"
+                   th:value="${month}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="year">Year</label>
+            <input type="number" id="year" name="year"
+                   th:value="${year}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Pocket Money</label>
+            <input type="number" id="amount" name="amount"
+                   min="0.01" step="0.01" required>
+        </div>
+
+        <button type="submit">Save Budget</button>
+    </form>
+
+    <h2>Daily Transactions</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Bill</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="txn : ${transactions}">
+            <td th:text="${txn.transactionDate}"></td>
+            <td th:text="${txn.type}"></td>
+            <td th:text="'₹ ' + ${txn.amount}"
+                th:class="${txn.type == 'EXPENSE'} ? 'expense' : 'income'"></td>
+            <td th:text="${txn.description}"></td>
+            <td th:text="${txn.hasBill ? 'Yes' : 'No'}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(transactions)}">
+            <td colspan="5">No transactions found for this month.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

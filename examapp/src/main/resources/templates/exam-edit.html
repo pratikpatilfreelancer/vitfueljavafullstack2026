@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Exam</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <h1>Edit Exam</h1>
+    <form th:action="@{/exams/{id}/edit(id=${exam.id})}" method="post">
+        <label>Title:</label>
+        <input type="text" name="title" th:value="${exam.title}" required /><br/>
+        <label>Total Marks:</label>
+        <input type="number" name="totalMarks" th:value="${exam.totalMarks}" required /><br/>
+        <button type="submit">Save Changes</button>
+    </form>
+    <br/>
+    <a th:href="@{/exams}">&larr; Back to All Exams</a>
+</body>
+</html>

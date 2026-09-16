@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Reports - AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Reports</li>
+        </ol>
+    </nav>
+
+    <h2>Attendance Reports</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/reports}" method="post" class="row g-3">
+                <div class="col-md-3">
+                    <label for="batchId" class="form-label">Batch</label>
+                    <select class="form-select" id="batchId" name="batchId">
+                        <option value="">All Batches</option>
+                        <option th:each="batch : ${batches}" 
+                                th:value="${batch.id}" 
+                                th:text="${batch.batchCode + ' - ' + batch.subject}" 
+                                th:selected="${filter != null and filter.batchId == batch.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" th:value="${filter?.startDate}">
+                </div>
+                <div class="col-md-3">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" th:value="${filter?.endDate}">
+                </div>
+                <div class="col-md-3">
+                    <label for="reportType" class="form-label">Report Type</label>
+                    <select class="form-select" id="reportType" name="reportType">
+                        <option value="batch" th:selected="${filter?.reportType == 'batch'}">Student-wise</option>
+                        <option value="monthly" th:selected="${filter?.reportType == 'monthly'}">Monthly</option>
+                        <option value="percentage" th:selected="${filter?.reportType == 'percentage'}">Percentage (<75% flag)</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-primary">🔍 Generate Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${reportGenerated}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Report Results</h4>
+            <div>
+                <a th:href="@{/admin/reports/export/excel(batchId=${filter?.batchId}, startDate=${filter?.startDate}, endDate=${filter?.endDate}, reportType=${filter?.reportType})}" class="btn btn-success btn-sm me-2">📥 Export Excel</a>
+                <a th:href="@{/admin/reports/export/pdf(batchId=${filter?.batchId}, startDate=${filter?.startDate}, endDate=${filter?.endDate}, reportType=${filter?.reportType})}" class="btn btn-danger btn-sm">📄 Export PDF</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Enrollment No</th>
+                        <th>Student Name</th>
+                        <th>Batch</th>
+                        <th>Total Classes</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Percentage</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="stat : ${stats}">
+                        <td th:text="${stat.enrollmentNo}"></td>
+                        <td th:text="${stat.studentName}"></td>
+                        <td th:text="${stat.batchCode}"></td>
+                        <td th:text="${stat.totalClasses}"></td>
+                        <td th:text="${stat.presentCount}"></td>
+                        <td th:text="${stat.absentCount}"></td>
+                        <td th:text="${#numbers.formatDecimal(stat.percentage, 1, 2) + '%'}"></td>
+                        <td>
+                            <span th:if="${stat.belowThreshold}" class="badge bg-danger">⚠️ BELOW 75%</span>
+                            <span th:if="${!stat.belowThreshold}" class="badge bg-success">OK</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(stats)}" class="alert alert-warning">
+            No attendance records found for the selected criteria.
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <hr class="mt-4">
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary">← Back to Dashboard</a>
+        <a th:href="@{/admin/teachers}" class="btn btn-outline-primary">👨‍🏫 Teachers</a>
+        <a th:href="@{/admin/students}" class="btn btn-outline-success">🎓 Students</a>
+        <a th:href="@{/admin/batches}" class="btn btn-outline-warning">📚 Batches</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
