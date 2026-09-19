@@ -1,0 +1,203 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f4f6f8;
+  color: #1f2933;
+}
+
+.navbar {
+  background-color: #1f3a5f;
+  color: white;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .brand {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.navbar .links a,
+.navbar .links button {
+  color: white;
+  margin-left: 18px;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.navbar .links a:hover,
+.navbar .links button:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 28px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+input, select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 5px;
+  font-size: 0.95rem;
+}
+
+button.btn {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1f3a5f;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+button.btn:hover {
+  background-color: #16293f;
+}
+
+button.btn.secondary {
+  background-color: #6b7785;
+}
+
+button.btn.danger {
+  background-color: #c0392b;
+}
+
+button.btn.small {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  text-align: left;
+  padding: 9px 8px;
+  border-bottom: 1px solid #e4e7eb;
+  font-size: 0.9rem;
+}
+
+th {
+  background-color: #f0f2f5;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badge.PENDING { background-color: #e0a800; }
+.badge.APPROVED { background-color: #2e86de; }
+.badge.CANCELLED { background-color: #6b7785; }
+.badge.ISSUED { background-color: #8e44ad; }
+.badge.COMPLETED { background-color: #27ae60; }
+.badge.BORROWED { background-color: #8e44ad; }
+.badge.RETURNED { background-color: #27ae60; }
+
+.error-box {
+  background-color: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6cb;
+  padding: 10px 14px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+}
+
+.success-box {
+  background-color: #eafaf1;
+  color: #1e8449;
+  border: 1px solid #b7ecc8;
+  padding: 10px 14px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+}
+
+.auth-page {
+  max-width: 380px;
+  margin: 60px auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tabs a {
+  padding: 8px 14px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #1f3a5f;
+  background: #e4e9f0;
+  font-size: 0.9rem;
+}
+
+.tabs a.active {
+  background: #1f3a5f;
+  color: white;
+}
+
+.muted {
+  color: #6b7785;
+  font-size: 0.85rem;
+}
+
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.search-row input {
+  flex: 1;
+}

@@ -1,307 +1,301 @@
-# Online Exam Evaluation System
+# Library Book Reservation System
 
-A Spring Boot–based web application that allows admins to create exams with multiple question types (MCQ, True/False) and enables candidates to attempt them online, with automatic evaluation and score generation. Built using Spring Boot, JPA, and a normalized relational database, it demonstrates core OOP concepts including inheritance, polymorphism, aggregation, interfaces, and exception handling, along with full CRUD functionality.
+A simple, full-stack **Library Book Reservation System** built as a college minor project to demonstrate Spring Boot, microservices, REST APIs, Spring Data JPA/Hibernate, MySQL, and a React frontend.
 
-## Features
+The project intentionally stays small and explainable: two Spring Boot microservices, one MySQL database per service, and a plain React frontend — no Kafka, Docker, Kubernetes, JWT, Redis, or other infrastructure that a minor project doesn't need.
 
-- Create, update, and delete exams
-- Add, edit, and delete MCQ and True/False questions
-- Candidates can attempt exams through a web interface
-- Automatic evaluation and score generation on submission
-- View exam results and history
-- REST API for all core operations, tested via Postman
-- Interactive API documentation via Swagger/OpenAPI
+---
 
-## Tech Stack
+## 1. Project Overview
 
-- **Backend:** Spring Boot
-- **Data Layer:** Spring Data JPA (Hibernate)
-- **Frontend:** Thymeleaf, HTML, CSS
-- **Database:** MySQL
-- **API Testing:** Postman
-- **API Documentation:** Swagger / OpenAPI
-- **End-to-End Testing:** Selenium / Playwright
+The system lets **students** search a library's book catalog, check availability, reserve a book, and cancel their own active reservations. **Librarians** manage the book catalog, review and approve reservations, and handle the physical issuing and return of books.
 
-## OOP Concepts Demonstrated
-
-| Concept | Where |
-|---|---|
-| Inheritance | `Question` (abstract) → `MCQQuestion`, `TrueFalseQuestion` |
-| Polymorphism (runtime) | `evaluate()` overridden per question type, called via base `Question` reference |
-| Polymorphism (compile-time) | Overloaded question creation methods |
-| Aggregation | `Exam` HAS-A `Question` list; `Exam` HAS-A `Attempt` list |
-| Encapsulation | Private fields with public getters/setters across all entities |
-| Exception Handling | Try/catch blocks in service layer for safe evaluation and lookups |
-| Static/Final | Constants and shared values where applicable |
-| Downcasting | Used when editing type-specific question fields (MCQ/True-False) |
-
-## Architecture
+Two roles, one simple workflow:
 
 ```
-Presentation (Thymeleaf) 
-        ↓
-Controller (REST + Page Controllers)
-        ↓
-Service (Business Logic)
-        ↓
-Repository (Spring Data JPA)
-        ↓
-Database (MySQL)
+Student reserves a book  →  Librarian approves it  →  Librarian issues it  →  Student returns it
 ```
 
-## Database Schema
+---
 
-**Tables:** `exam`, `question`, `attempt`, `mcqquestion_options`
+## 2. Features
 
-- `exam` (1) ── (many) `question`
-- `exam` (1) ── (many) `attempt`
+**Student**
+- Register (always as STUDENT) and log in
+- Search/browse the book catalog
+- Check book availability
+- Reserve an available book
+- Cancel an active (PENDING/APPROVED) reservation
+- View their own reservation history
 
-Normalized into separate tables to avoid data duplication (2NF/3NF), with foreign key relationships enforced at the database level.
+**Librarian**
+- Log in (account seeded manually / on startup)
+- Full CRUD on books
+- View and approve reservations
+- Issue a book against an approved reservation
+- Process a book return
+- View borrowing records
 
-## Getting Started
+**Cross-cutting**
+- Role-based authorization enforced on the **backend**, not just hidden UI buttons
+- Centralized, meaningful error handling (404 / 400 / 401 / 403 / 409)
+- Input validation on important fields (email format, required fields, copy counts)
 
-### Prerequisites
-- Java 17
-- Maven
-- MySQL Server running locally
+---
 
-### Setup
-
-1. Clone or download this project
-2. Create a database:
-   ```sql
-   CREATE DATABASE examdb;
-   ```
-3. Configure `src/main/resources/application.properties`:
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/examdb
-   spring.datasource.username=root
-   spring.datasource.password=yourpassword
-   spring.jpa.hibernate.ddl-auto=update
-   ```
-4. Run the application:
-   ```
-   mvn spring-boot:run
-   ```
-5. Open your browser at:
-   ```
-   http://localhost:8080/
-   ```
-
-## API Documentation
-
-Once the app is running, view interactive API docs at:
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
-## Page Routes
-
-| URL | Description |
-|---|---|
-| `/` | Home page |
-| `/exams` | View all exams |
-| `/exams/create` | Create a new exam |
-| `/exams/{id}/edit` | Edit an exam |
-| `/exams/{id}/questions` | Add/edit/delete questions for an exam |
-| `/exams/{id}/attempt` | Attempt an exam as a candidate |
-
-## REST API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/exams` | Create exam |
-| GET | `/api/exams` | List all exams |
-| GET | `/api/exams/{id}` | Get exam by ID |
-| PUT | `/api/exams/{id}` | Update exam |
-| DELETE | `/api/exams/{id}` | Delete exam |
-| POST | `/api/exams/{id}/questions/mcq` | Add MCQ question |
-| POST | `/api/exams/{id}/questions/truefalse` | Add True/False question |
-| DELETE | `/api/questions/{id}` | Delete a question |
-| POST | `/api/exams/{id}/attempt` | Submit an exam attempt |
-
-## Project Structure
-
-```
-src/main/java/com/examapp/examapp/
-  entity/        Exam, Question, MCQQuestion, TrueFalseQuestion, Attempt
-  repository/    ExamRepository, QuestionRepository, AttemptRepository
-  service/       ExamService, QuestionService, AttemptService
-  controller/    REST controllers and Thymeleaf page controllers
-  
-src/main/resources/
-  templates/     Thymeleaf HTML pages
-  static/        CSS
-  application.properties
-```
-
-## Team
-
-| Member | Responsibility |
-|---|---|
-| [Your Name] | Backend (entities, services, controllers) |
-| [Partner Name] | Database design, frontend integration |
-
-## Development Process
-
-This project followed the Waterfall model:
-1. Requirement Analysis — PRD and feature list
-2. System Design — class diagram, ER diagram, architecture diagram
-3. Implementation — entity, repository, service, controller layers
-4. Testing — Postman for API testing, Selenium/Playwright for end-to-end testing
-5. Deployment — final working build
-
-# vitfueljavafullstack2026
-VIT full stack java repo CS and AIML project
-# Attendance Management System (AMS)
-
-A full-stack web application for schools, colleges, and institutes to record and manage daily student attendance. Built with **Spring Boot 3**, **Thymeleaf**, **Spring Data JPA**, **MySQL**, and **Spring Security**.
-
-## Features
-
-- **Role-based access** — Admin and Teacher roles with Spring Security
-- **Admin CRUD** — Manage teachers, students, and batches
-- **Attendance marking** — Mark attendance for a whole batch (checkbox list) or mark absentees only
-- **Business rules** — Future-date rejection, duplicate attendance prevention, unique enrollment/employee numbers
-- **Reports** — Monthly student-wise, per-batch date range, and attendance-percentage (flags students < 75%)
-- **Export** — Download reports as **Excel** (Apache POI) or **PDF** (OpenPDF)
-- **Responsive UI** — Thymeleaf + Bootstrap 5, mobile-friendly
-- **BCrypt passwords** — Secure password hashing, never stored in plain text
-- **Data seeder** — Auto-creates sample data on first run for easy testing
-
-## Tech Stack
+## 3. Technology Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Backend | Java 17, Spring Boot 3.2.5 |
-| Frontend | Thymeleaf, Bootstrap 5 |
-| Database | MySQL 8+ (H2 for tests) |
-| Security | Spring Security 6, BCrypt |
-| ORM | Spring Data JPA / Hibernate |
-| Reports | Apache POI (Excel), OpenPDF (PDF) |
-| Build | Maven |
-| Tests | JUnit 5, Mockito |
+|---|---|
+| Backend language | Java 17 |
+| Backend framework | Spring Boot 3 |
+| Persistence | Spring Data JPA + Hibernate |
+| Database | MySQL 8 |
+| Build tool | Maven |
+| API style | REST (JSON) |
+| Security | Spring Security, HTTP Basic Auth, BCrypt password hashing (**no JWT/OAuth**) |
+| Frontend | React (functional components + hooks), React Router, Axios |
+| Frontend state | Local component state + one small AuthContext (**no Redux**) |
 
-## Project Structure
+---
+
+## 4. Microservice Architecture
+
+Exactly two microservices, each with its own database, and no API Gateway (skipped deliberately to keep the project simple — see "Design Decisions" below).
+
+```mermaid
+flowchart LR
+    subgraph Browser
+        FE[React Frontend<br/>localhost:3000]
+    end
+
+    subgraph US[User Service :8081]
+        UC[UserController]
+        USv[UserService]
+        UR[UserRepository]
+        UDB[(library_user_db<br/>users)]
+        UC --> USv --> UR --> UDB
+    end
+
+    subgraph LS[Library Service :8082]
+        BC[Book/Reservation/Borrowing<br/>Controllers]
+        LSv[Book/Reservation/Borrowing<br/>Services]
+        LR[Repositories]
+        LDB[(library_db<br/>books, reservations, borrowings)]
+        BC --> LSv --> LR --> LDB
+    end
+
+    FE -- "REST + HTTP Basic\n/api/users/**" --> US
+    FE -- "REST + HTTP Basic\n/api/books, /api/reservations, /api/borrowings" --> LS
+    LS -- "REST call: POST /api/users/login\n(delegated authentication)" --> US
+```
+
+### How the two services communicate
+
+The **User Service** owns the `users` table and is the single source of truth for identity — it authenticates its own requests locally via a `UserDetailsService` backed by that table.
+
+The **Library Service** deliberately has **no users table** (avoiding a duplicated, denormalized copy of user data across two databases). Instead, every request to the Library Service is authenticated by a custom `RemoteAuthenticationProvider` that makes a plain REST call — `POST /api/users/login` — to the User Service with the caller's email/password. If the User Service confirms the credentials, the Library Service trusts the returned `userId` and `role` for that request (attached to the Spring Security `Authentication` object) and never trusts a client-supplied user ID.
+
+This is the concrete example of "microservice-to-microservice communication" in this project: a synchronous REST call, made on every authenticated request to the Library Service, using Spring's `RestTemplate`.
+
+Both services run independently (their own JVM process, own port, own database) and the frontend talks to whichever one owns the resource it needs — there's no gateway routing layer.
+
+---
+
+## 5. Database Design
+
+Two databases (one per microservice), normalized, with no redundant tables.
+
+**`library_user_db`** (User Service)
+
+| Table | Columns |
+|---|---|
+| `users` | `user_id` (PK), `name`, `email` (unique), `password` (BCrypt hash), `role` (`STUDENT`/`LIBRARIAN`) |
+
+**`library_db`** (Library Service)
+
+| Table | Columns |
+|---|---|
+| `books` | `book_id` (PK), `title`, `author`, `isbn` (unique), `category`, `total_copies`, `available_copies` |
+| `reservations` | `reservation_id` (PK), `user_id` (cross-service reference, **not** a DB foreign key), `book_id` (FK → `books`), `reservation_date`, `status` |
+| `borrowings` | `borrowing_id` (PK), `reservation_id` (FK → `reservations`, unique), `issue_date`, `due_date`, `return_date`, `status` |
+
+### Entity Relationships
+
+```mermaid
+erDiagram
+    USERS ||--o{ RESERVATIONS : "makes (cross-service reference)"
+    BOOKS ||--o{ RESERVATIONS : "is reserved in"
+    RESERVATIONS ||--|| BORROWINGS : "results in"
+
+    USERS {
+        bigint user_id PK
+        varchar name
+        varchar email
+        varchar password
+        varchar role
+    }
+    BOOKS {
+        bigint book_id PK
+        varchar title
+        varchar author
+        varchar isbn
+        varchar category
+        int total_copies
+        int available_copies
+    }
+    RESERVATIONS {
+        bigint reservation_id PK
+        bigint user_id
+        bigint book_id FK
+        datetime reservation_date
+        varchar status
+    }
+    BORROWINGS {
+        bigint borrowing_id PK
+        bigint reservation_id FK
+        date issue_date
+        date due_date
+        date return_date
+        varchar status
+    }
+```
+
+- **User 1 → Many Reservations**: one student can have many reservations, tracked by `user_id` on `reservations`. Because `users` and `reservations` live in different databases (different microservices), this is a logical relationship only — enforced in application code, not a SQL foreign key.
+- **Book 1 → Many Reservations**: a real JPA `@ManyToOne`/`@JoinColumn`, since both tables live in `library_db`.
+- **Reservation 1 → 1 Borrowing**: a real JPA `@OneToOne`, enforced with a `unique` constraint on `reservations.reservation_id` in the `borrowings` table.
+
+---
+
+## 6. API Endpoints
+
+All error responses share the shape:
+```json
+{ "timestamp": "...", "status": 404, "error": "Not Found", "message": "Book not found with id: 5" }
+```
+
+### User Service (`http://localhost:8081`)
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/api/users/register` | Public | Register a new STUDENT account |
+| POST | `/api/users/login` | Public | Validate credentials, return user info + role |
+| GET | `/api/users/{id}` | Owner or LIBRARIAN | Get a user's profile |
+| GET | `/api/users` | LIBRARIAN | List all users |
+| PUT | `/api/users/{id}` | Owner or LIBRARIAN | Update a profile |
+| DELETE | `/api/users/{id}` | LIBRARIAN | Delete a user |
+
+### Library Service (`http://localhost:8082`)
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/api/books` | Public | List all books |
+| GET | `/api/books/{id}` | Public | Get one book |
+| GET | `/api/books/search?keyword=java` | Public | Search by title/author/category |
+| POST | `/api/books` | LIBRARIAN | Add a book |
+| PUT | `/api/books/{id}` | LIBRARIAN | Update a book |
+| DELETE | `/api/books/{id}` | LIBRARIAN | Delete a book |
+| POST | `/api/reservations` | STUDENT | Reserve a book (`{ "bookId": 1 }`) |
+| GET | `/api/reservations` | LIBRARIAN | List all reservations |
+| GET | `/api/reservations/user/{userId}` | Owner or LIBRARIAN | A student's reservation history |
+| PUT | `/api/reservations/{id}/cancel` | Owner or LIBRARIAN | Cancel an active reservation |
+| PUT | `/api/reservations/{id}/approve` | LIBRARIAN | Approve a PENDING reservation |
+| POST | `/api/borrowings/issue` | LIBRARIAN | Issue a book (`{ "reservationId": 1 }`) |
+| PUT | `/api/borrowings/{id}/return` | LIBRARIAN | Return a book |
+| GET | `/api/borrowings` | LIBRARIAN | List all borrowing records |
+
+Every request other than register/login/public book browsing requires **HTTP Basic** credentials (`email` as username, plain-text password over the wire — acceptable for a local minor-project demo; see Design Decisions).
+
+---
+
+## 7. Reservation Workflow
 
 ```
-com.ams
- ├── config/         SecurityConfig, CustomLoginSuccessHandler, DataSeeder, WebConfig
- ├── controller/     AuthController, AdminDashboardController, TeacherController,
- │                   StudentController, BatchController, AttendanceController,
- │                   TeacherDashboardController, TeacherSettingsController,
- │                   AdminReportController, TeacherReportController
- ├── entity/         User, Batch, Student, Attendance
- ├── repository/     UserRepository, BatchRepository, StudentRepository, AttendanceRepository
- ├── service/        UserService, BatchService, StudentService, AttendanceService,
- │                   ReportService, CustomUserDetailsService
- ├── service/impl/   All service implementations
- ├── dto/            TeacherDto, StudentDto, BatchDto, AttendanceFormDto,
- │                   ReportFilterDto, StudentAttendanceStats
- ├── exception/      ResourceNotFoundException, DuplicateRecordException,
- │                   FutureDateException, GlobalExceptionHandler
- └── util/           ExcelReportUtil, PdfReportUtil
+Student searches for a book
+        ↓
+Student checks availability (GET /api/books/{id})
+        ↓
+Student reserves an available book → POST /api/reservations
+        ↓
+Reservation created with status PENDING; book.availableCopies -= 1
+        ↓
+Librarian reviews and approves → PUT /api/reservations/{id}/approve  (status → APPROVED)
+        ↓
+Librarian issues the book → POST /api/borrowings/issue  (Reservation → ISSUED, Borrowing created as BORROWED)
+        ↓
+Student returns the book → PUT /api/borrowings/{id}/return
+        ↓
+Borrowing → RETURNED, Reservation → COMPLETED, book.availableCopies += 1
 ```
 
-## Setup & Run
+Guardrails enforced by `ReservationService` / `BorrowingService`:
+- A reservation cannot be created if `availableCopies == 0` → `BookUnavailableException` (HTTP 409).
+- A student cannot hold two active (PENDING/APPROVED/ISSUED) reservations for the *same* book → `DuplicateReservationException` (HTTP 409).
+- Only `PENDING` or `APPROVED` reservations can be cancelled; cancelling restores `availableCopies`.
+- Only `APPROVED` reservations can be issued; only outstanding (`BORROWED`) loans can be returned.
+
+### Reservation status: `PENDING → APPROVED → CANCELLED / ISSUED → COMPLETED`
+### Borrowing status: `BORROWED → RETURNED`
+
+---
+
+## 8. Backend Architecture (per service)
+
+```
+Controller  →  Service  →  Repository  →  Entity  →  MySQL
+```
+
+- **Controllers** only handle HTTP concerns (request/response, status codes) — no business logic.
+- **Services** hold all business rules (availability checks, duplicate checks, status transitions).
+- **Repositories** are plain `JpaRepository` interfaces — no hand-written SQL.
+- **Entities** are mapped with `@Entity`, `@Id`, `@GeneratedValue`, `@ManyToOne`, `@OneToOne`, `@JoinColumn`.
+- **DTOs** decouple the API contract from the JPA entities (e.g. `UserResponse` never exposes the password hash).
+- **`@RestControllerAdvice`** (`GlobalExceptionHandler`) turns custom exceptions into consistent JSON error responses.
+
+---
+
+## 9. How to Run the Project
 
 ### Prerequisites
-
-- Java 17+ (tested with Java 21)
+- JDK 17+
 - Maven 3.8+
-- MySQL 8+ running on `localhost:3306`
+- MySQL 8 running locally (default: `root` / `root` — update `application.properties` in each service if different)
+- Node.js 18+ and npm
 
-### 1. Create the database
-
+### 1. Start the User Service
 ```bash
-mysql -u root -p -e "CREATE DATABASE ams_db;"
-```
-
-Or use the provided `schema.sql`:
-```bash
-mysql -u root -p < schema.sql
-```
-
-### 2. Configure database connection
-
-Edit `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/ams_db
-spring.datasource.username=root
-spring.datasource.password=yourpassword
-```
-
-### 3. Build and run
-
-```bash
-mvn clean package
-java -jar target/attendance-management-system-0.0.1-SNAPSHOT.jar
-```
-
-Or run directly with Maven:
-```bash
+cd user-service
 mvn spring-boot:run
 ```
+Runs on `http://localhost:8081`. It auto-creates the `library_user_db` schema/tables (`spring.jpa.hibernate.ddl-auto=update`) and seeds one default LIBRARIAN account on first startup (see credentials below).
 
-### 4. Access the application
-
-Open [http://localhost:8080/login](http://localhost:8080/login)
-
-### Default Credentials (DataSeeder)
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | `admin` | `admin123` |
-| Teacher | `john.smith` | `teacher123` |
-| Teacher | `jane.doe` | `teacher123` |
-
-The DataSeeder also creates 3 sample batches (CS101, MATH201, PHY101) and 9 sample students.
-
-## Route Map
-
-| Route | Role | Description |
-|-------|------|-------------|
-| `/login` | Public | Login form |
-| `/admin/dashboard` | ADMIN | Stats overview (teacher/student/batch counts) |
-| `/admin/teachers` | ADMIN | List/CRUD teachers |
-| `/admin/students` | ADMIN | List/CRUD students |
-| `/admin/batches` | ADMIN | List/CRUD batches |
-| `/admin/reports` | ADMIN | Generate reports for any batch, export Excel/PDF |
-| `/teacher/dashboard` | TEACHER | List of assigned batches |
-| `/teacher/batches/{id}/attendance` | TEACHER | Mark attendance for a batch on a date |
-| `/teacher/batches/{id}/attendance/absentees` | TEACHER | Mark absentees only |
-| `/teacher/reports` | TEACHER | Reports scoped to own batches |
-| `/teacher/settings` | TEACHER | Change password |
-
-## Reports
-
-- **Student-wise report** — Present/absent counts per student for a batch and date range
-- **Monthly report** — Same as student-wise, scoped to a specific month
-- **Percentage report** — Flags students below 75% attendance threshold
-- **Export** — All reports downloadable as `.xlsx` (Excel) or `.pdf` (PDF)
-
-## Running Tests
-
+### 2. Start the Library Service
 ```bash
-mvn test
+cd library-service
+mvn spring-boot:run
 ```
+Runs on `http://localhost:8082`. It auto-creates the `library_db` schema/tables the same way. It needs the User Service to be reachable at `http://localhost:8081` for authentication to work (configurable via `user-service.base-url` in its `application.properties`).
 
-Tests use H2 in-memory database (no MySQL required):
-- `AttendanceServiceTest` — Unit tests with Mockito (future-date rejection, duplicate prevention, batch/absentee marking)
-- `AttendanceRepositoryTest` — Integration tests (queries, unique constraints)
-- `StudentRepositoryTest` — Integration tests (find-by queries, unique enrollment enforcement)
+### 3. Start the React frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+Runs on `http://localhost:3000` and talks directly to both services (their base URLs are set in `src/api/client.js`).
 
-## Design Assumptions
+### Example login credentials
+| Role | Email | Password |
+|---|---|---|
+| Librarian (seeded automatically) | `librarian@library.com` | `librarian123` |
+| Student | Register your own via the "Register" page | — |
 
-1. **Single batch per student** — Matches the spec's FK design (student has one batch_id).
-2. **"Mark absentees only"** — Checked students are marked ABSENT; all unchecked students in the batch are marked PRESENT.
-3. **Attendance correction** — Same day only; once attendance is marked for a student+date, it cannot be re-marked (enforced by unique constraint).
-4. **H2 for tests** — Tests use H2 in-memory DB so `mvn test` works without a running MySQL instance.
-5. **`ddl-auto=update`** — JPA auto-creates/updates tables. The `schema.sql` file is provided for manual setup.
+---
 
-## Future Enhancements
+## 10. Design Decisions
 
-- Email/SMS notices for students below 75% attendance
-- Biometric / QR-code based attendance capture
-- REST API layer + mobile app
+- **No API Gateway.** With only two services and no browser-side routing problem to solve (the React app simply calls each service's own port), a gateway would add configuration and moving parts without teaching anything new for this project's scope.
+- **No JWT/OAuth.** The brief calls for "basic authentication" and explicitly excludes JWT. HTTP Basic + BCrypt-hashed passwords satisfies "different permissions for different roles, enforced on the backend" without the added complexity of token issuance/refresh.
+- **Library Service has no `users` table.** Storing a second, denormalized copy of user data in the Library Service's database would violate normalization and create a data-sync problem (what happens when a user's password changes?). Instead it delegates authentication to the User Service over REST on every request — a small, deliberate coupling that doubles as the project's microservice-communication example.
+- **`userId` on `Reservation` is a plain column, not a JPA relationship.** Cross-database foreign keys aren't possible (and wouldn't be a good idea even with the same DB engine, in a microservices setup) — each service should own and be able to evolve its own schema independently.
+- **`availableCopies` is decremented at reservation time, not at issue time.** This matches the stated workflow ("Available copies decrease by 1" appears immediately after "Student reserves an available book") and prevents two students from reserving the same last copy while a librarian is still deciding whether to approve the first request.
