@@ -1,0 +1,19 @@
+/* Small custom touches on top of Bootstrap's default styling */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
