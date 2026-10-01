@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Register</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/login.html">Login</a></li>
+            <li><a href="/register.html">Register</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Register</h2>
+        <div id="alertContainer"></div>
+        <div class="card" style="max-width: 500px; margin: 0 auto;">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regEmail">Email *</label>
+                    <input type="email" id="regEmail" required placeholder="your@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password *</label>
+                    <input type="password" id="regPassword" required placeholder="Min 6 characters" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Role *</label>
+                    <select id="regRole" required>
+                        <option value="STUDENT">Student</option>
+                        <option value="COMPANY">Company</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="regRefId">Reference ID (Student ID or Company ID) *</label>
+                    <input type="text" id="regRefId" required placeholder="e.g. student-001 or company-001">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">
+                Already have an account? <a href="/login.html">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

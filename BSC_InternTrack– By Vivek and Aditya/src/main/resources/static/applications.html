@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Applications</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/students.html">Students</a></li>
+            <li><a href="/companies.html">Companies</a></li>
+            <li><a href="/internships.html">Internships</a></li>
+            <li><a href="/applications.html">Applications</a></li>
+            <li><a href="/notifications.html">Notifications</a></li>
+            <li><a href="/login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Applications</h2>
+
+        <div id="alertContainer"></div>
+
+        <div class="card">
+            <button class="btn btn-primary" onclick="openApplicationModal()">Add Application</button>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Internship</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTableBody">
+                    <tr><td colspan="6">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="applicationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="applicationModalTitle">Add Application</h2>
+                <button class="modal-close" onclick="closeApplicationModal()">&times;</button>
+            </div>
+            <form id="applicationForm">
+                <input type="hidden" id="applicationId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="applicationStudentId">Student *</label>
+                        <select id="applicationStudentId" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationInternshipId">Internship *</label>
+                        <select id="applicationInternshipId" required></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="applicationDate">Application Date</label>
+                        <input type="date" id="applicationDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationStatus">Status</label>
+                        <select id="applicationStatus">
+                            <option value="Applied">Applied</option>
+                            <option value="Shortlisted">Shortlisted</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Selected">Selected</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="applicationNotes">Notes</label>
+                    <textarea id="applicationNotes" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeApplicationModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Update Status</h2>
+                <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <form id="statusForm">
+                <input type="hidden" id="statusApplicationId">
+                <div class="form-group">
+                    <label for="statusValue">New Status</label>
+                    <select id="statusValue">
+                        <option value="Applied">Applied</option>
+                        <option value="Shortlisted">Shortlisted</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Selected">Selected</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/applications.js"></script>
+</body>
+</html>

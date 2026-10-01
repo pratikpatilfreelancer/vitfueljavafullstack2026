@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Students</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/students.html">Students</a></li>
+            <li><a href="/companies.html">Companies</a></li>
+            <li><a href="/internships.html">Internships</a></li>
+            <li><a href="/applications.html">Applications</a></li>
+            <li><a href="/notifications.html">Notifications</a></li>
+            <li><a href="/login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Students</h2>
+
+        <div id="alertContainer"></div>
+
+        <div class="card">
+            <button class="btn btn-primary" onclick="openStudentModal()">Add Student</button>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>College</th>
+                        <th>Course</th>
+                        <th>Year</th>
+                        <th>Skills</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <tr><td colspan="8">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="studentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="studentModalTitle">Add Student</h2>
+                <button class="modal-close" onclick="closeStudentModal()">&times;</button>
+            </div>
+            <form id="studentForm">
+                <input type="hidden" id="studentId">
+                <div class="form-group">
+                    <label for="studentName">Name *</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentEmail">Email *</label>
+                        <input type="email" id="studentEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPhone">Phone</label>
+                        <input type="text" id="studentPhone">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentCollege">College</label>
+                        <input type="text" id="studentCollege">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentCourse">Course</label>
+                        <input type="text" id="studentCourse">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentYear">Year</label>
+                        <input type="number" id="studentYear">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentResumeUrl">Resume URL</label>
+                        <input type="text" id="studentResumeUrl">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="studentSkills">Skills</label>
+                    <textarea id="studentSkills" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeStudentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/students.js"></script>
+</body>
+</html>

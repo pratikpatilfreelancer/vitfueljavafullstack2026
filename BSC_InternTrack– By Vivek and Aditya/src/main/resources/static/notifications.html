@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Notifications</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/students.html">Students</a></li>
+            <li><a href="/companies.html">Companies</a></li>
+            <li><a href="/internships.html">Internships</a></li>
+            <li><a href="/applications.html">Applications</a></li>
+            <li><a href="/notifications.html">Notifications <span id="unreadBadge" class="hidden" style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; margin-left: 4px;">0</span></a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Notifications</h2>
+        <div id="alertContainer"></div>
+        <div class="card">
+            <button class="btn btn-primary" onclick="loadNotifications()">Refresh Notifications</button>
+            <button class="btn btn-secondary" onclick="markAllAsRead()" style="margin-left: 0.5rem;">Mark All as Read</button>
+        </div>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Message</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="notificationsTableBody">
+                    <tr><td colspan="5">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

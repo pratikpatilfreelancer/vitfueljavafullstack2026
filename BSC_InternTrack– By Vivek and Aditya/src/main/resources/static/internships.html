@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Internships</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/students.html">Students</a></li>
+            <li><a href="/companies.html">Companies</a></li>
+            <li><a href="/internships.html">Internships</a></li>
+            <li><a href="/applications.html">Applications</a></li>
+            <li><a href="/notifications.html">Notifications</a></li>
+            <li><a href="/login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Internships</h2>
+
+        <div id="alertContainer"></div>
+
+        <div class="card">
+            <button class="btn btn-primary" onclick="openInternshipModal()">Add Internship</button>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Duration</th>
+                        <th>Stipend</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="internshipsTableBody">
+                    <tr><td colspan="7">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="internshipModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="internshipModalTitle">Add Internship</h2>
+                <button class="modal-close" onclick="closeInternshipModal()">&times;</button>
+            </div>
+            <form id="internshipForm">
+                <input type="hidden" id="internshipId">
+                <div class="form-group">
+                    <label for="internshipTitle">Title *</label>
+                    <input type="text" id="internshipTitle" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="internshipCompanyId">Company *</label>
+                        <select id="internshipCompanyId" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="internshipLocation">Location</label>
+                        <input type="text" id="internshipLocation">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="internshipDescription">Description</label>
+                    <textarea id="internshipDescription" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="internshipDuration">Duration</label>
+                        <input type="text" id="internshipDuration" placeholder="e.g. 3 Months">
+                    </div>
+                    <div class="form-group">
+                        <label for="internshipStipend">Stipend</label>
+                        <input type="number" id="internshipStipend" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="internshipRequiredSkills">Required Skills</label>
+                        <input type="text" id="internshipRequiredSkills">
+                    </div>
+                    <div class="form-group">
+                        <label for="internshipDeadline">Application Deadline</label>
+                        <input type="date" id="internshipDeadline">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeInternshipModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/internships.js"></script>
+</body>
+</html>

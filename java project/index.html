@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Student Performance Matrix Evaluator
+    </title>
+
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
+
+    <header>
+
+        <h1>
+            Student Performance Matrix Evaluator
+        </h1>
+
+        <p>
+            Calculate and manage student performance
+        </p>
+
+    </header>
+
+
+
+    <!-- ================================= -->
+    <!-- INPUT FORM -->
+    <!-- ================================= -->
+
+    <section class="card">
+
+        <h2>
+            Enter Student Marks
+        </h2>
+
+
+        <form id="studentForm">
+
+
+            <div class="form-grid">
+
+
+                <!-- Student Name -->
+
+                <div class="form-group">
+
+                    <label for="studentName">
+
+                        Student Name
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        placeholder="Enter student name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Mathematics -->
+
+                <div class="form-group">
+
+                    <label for="math">
+
+                        Mathematics (0-100)
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="math"
+                        min="0"
+                        max="100"
+                        placeholder="Enter marks"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Science -->
+
+                <div class="form-group">
+
+                    <label for="science">
+
+                        Science (0-100)
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="science"
+                        min="0"
+                        max="100"
+                        placeholder="Enter marks"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- English -->
+
+                <div class="form-group">
+
+                    <label for="english">
+
+                        English (0-100)
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="english"
+                        min="0"
+                        max="100"
+                        placeholder="Enter marks"
+                        required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Buttons -->
+
+            <div class="button-group">
+
+
+                <button
+                    type="submit"
+                    class="calculate-btn">
+
+                    Calculate & Add Record
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="clearBtn"
+                    class="clear-btn">
+
+                    Clear Fields
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================= -->
+
+    <section class="card">
+
+        <h2>
+            Latest Calculation Overview
+        </h2>
+
+
+        <div class="summary">
+
+
+            <div class="summary-box">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="total">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="summary-box">
+
+                <span>
+                    Average
+                </span>
+
+                <strong id="average">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="summary-box">
+
+                <span>
+                    Grade
+                </span>
+
+                <strong id="grade">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- PERFORMANCE TABLE -->
+    <!-- ================================= -->
+
+    <section class="card table-card">
+
+        <h2>
+            Performance Matrix Log
+        </h2>
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>Name</th>
+
+                        <th>Math</th>
+
+                        <th>Science</th>
+
+                        <th>English</th>
+
+                        <th>Total</th>
+
+                        <th>Average</th>
+
+                        <th>Grade</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="performanceTable">
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>

@@ -27,3 +27,8 @@ target/
 node_modules/
 .env
 .DS_Store
+
+# IDE project folders
+.vscode/
+.idea/
+*.iml

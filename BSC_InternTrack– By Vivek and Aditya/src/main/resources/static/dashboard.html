@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternTrack - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <h1>InternTrack</h1>
+        <ul>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/students.html">Students</a></li>
+            <li><a href="/companies.html">Companies</a></li>
+            <li><a href="/internships.html">Internships</a></li>
+            <li><a href="/applications.html">Applications</a></li>
+            <li><a href="/notifications.html">Notifications</a></li>
+            <li><a href="/login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="page-title">Dashboard</h2>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Applied</h3>
+                <div class="stat-value" id="statApplied">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Shortlisted</h3>
+                <div class="stat-value" id="statShortlisted">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Interviews</h3>
+                <div class="stat-value" id="statInterview">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Selected</h3>
+                <div class="stat-value" id="statSelected">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Rejected</h3>
+                <div class="stat-value" id="statRejected">0</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Quick Overview</h3>
+            <p>Welcome to InternTrack. Use the navigation to manage students, companies, internships, and applications.</p>
+            <p style="margin-top: 1rem;">
+                <a href="/applications.html" class="btn btn-primary">View Applications</a>
+                <a href="/students.html" class="btn btn-primary" style="margin-left: 0.5rem;">Manage Students</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
