@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Library Management System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            flex: 1;
+            padding: 25px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        .card h2 {
+            font-size: 35px;
+            margin: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add {
+            background: #27ae60;
+            color: white;
+        }
+
+        .delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        @media (max-width: 800px) {
+
+            .cards {
+                flex-direction: column;
+            }
+
+            input {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1>Library Management System</h1>
+
+    <p>Spring Boot | REST API | MySQL</p>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- DASHBOARD CARDS -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Total Books</h3>
+
+            <h2 id="bookCount">0</h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Total Members</h3>
+
+            <h2 id="memberCount">0</h2>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- BOOK MANAGEMENT -->
+
+    <div class="section">
+
+        <h2>Book Management</h2>
+
+
+        <input
+            type="text"
+            id="bookName"
+            placeholder="Book Name"
+        >
+
+
+        <input
+            type="text"
+            id="author"
+            placeholder="Author"
+        >
+
+
+        <input
+            type="text"
+            id="category"
+            placeholder="Category"
+        >
+
+
+        <input
+            type="number"
+            id="quantity"
+            placeholder="Quantity"
+        >
+
+
+        <button
+            class="add"
+            onclick="addBook()">
+
+            Add Book
+
+        </button>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="bookTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- MEMBER MANAGEMENT -->
+
+    <div class="section">
+
+        <h2>Member Management</h2>
+
+
+        <input
+            type="text"
+            id="memberName"
+            placeholder="Name"
+        >
+
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Email"
+        >
+
+
+        <input
+            type="text"
+            id="phone"
+            placeholder="Phone"
+        >
+
+
+        <button
+            class="add"
+            onclick="addMember()">
+
+            Add Member
+
+        </button>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="memberTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+    // =========================
+    // BOOK FUNCTIONS
+    // =========================
+
+
+    function loadBooks() {
+
+        fetch("/api/books")
+
+            .then(response => response.json())
+
+            .then(books => {
+
+                let table =
+                    document.getElementById("bookTable");
+
+                table.innerHTML = "";
+
+
+                document.getElementById("bookCount")
+                    .innerText = books.length;
+
+
+                books.forEach(book => {
+
+                    table.innerHTML += `
+
+                        <tr>
+
+                            <td>${book.bookId}</td>
+
+                            <td>${book.bookName}</td>
+
+                            <td>${book.author}</td>
+
+                            <td>${book.category}</td>
+
+                            <td>${book.quantity}</td>
+
+                            <td>
+
+                                <button
+                                    class="delete"
+                                    onclick="deleteBook(${book.bookId})">
+
+                                    Delete
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+            })
+
+            .catch(error => {
+
+                console.log(error);
+
+                alert("Unable to load books");
+
+            });
+
+    }
+
+
+
+    function addBook() {
+
+        let bookName =
+            document.getElementById("bookName").value.trim();
+
+        let author =
+            document.getElementById("author").value.trim();
+
+        let category =
+            document.getElementById("category").value.trim();
+
+        let quantity =
+            document.getElementById("quantity").value;
+
+
+        if (bookName === "") {
+
+            alert("Please enter book name");
+
+            return;
+        }
+
+
+        if (author === "") {
+
+            alert("Please enter author");
+
+            return;
+        }
+
+
+        if (category === "") {
+
+            alert("Please enter category");
+
+            return;
+        }
+
+
+        if (quantity === "") {
+
+            alert("Please enter quantity");
+
+            return;
+        }
+
+
+        if (Number(quantity) < 0) {
+
+            alert("Quantity cannot be negative");
+
+            return;
+        }
+
+
+        let book = {
+
+            bookName: bookName,
+
+            author: author,
+
+            category: category,
+
+            quantity: Number(quantity)
+
+        };
+
+
+        fetch("/api/books", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json"
+
+            },
+
+            body: JSON.stringify(book)
+
+        })
+
+        .then(response => response.json())
+
+        .then(() => {
+
+            alert("Book added successfully");
+
+            document.getElementById("bookName").value = "";
+
+            document.getElementById("author").value = "";
+
+            document.getElementById("category").value = "";
+
+            document.getElementById("quantity").value = "";
+
+            loadBooks();
+
+        })
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Unable to add book");
+
+        });
+
+    }
+
+
+
+    function deleteBook(id) {
+
+        let confirmDelete =
+            confirm("Are you sure you want to delete this book?");
+
+
+        if (!confirmDelete) {
+
+            return;
+        }
+
+
+        fetch("/api/books/" + id, {
+
+            method: "DELETE"
+
+        })
+
+        .then(response => response.text())
+
+        .then(message => {
+
+            alert(message);
+
+            loadBooks();
+
+        })
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Unable to delete book");
+
+        });
+
+    }
+
+
+
+    // =========================
+    // MEMBER FUNCTIONS
+    // =========================
+
+
+    function loadMembers() {
+
+        fetch("/api/members")
+
+            .then(response => response.json())
+
+            .then(members => {
+
+                let table =
+                    document.getElementById("memberTable");
+
+                table.innerHTML = "";
+
+
+                document.getElementById("memberCount")
+                    .innerText = members.length;
+
+
+                members.forEach(member => {
+
+                    table.innerHTML += `
+
+                        <tr>
+
+                            <td>${member.memberId}</td>
+
+                            <td>${member.name}</td>
+
+                            <td>${member.email}</td>
+
+                            <td>${member.phone}</td>
+
+                            <td>
+
+                                <button
+                                    class="delete"
+                                    onclick="deleteMember(${member.memberId})">
+
+                                    Delete
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+            })
+
+            .catch(error => {
+
+                console.log(error);
+
+                alert("Unable to load members");
+
+            });
+
+    }
+
+
+
+    function addMember() {
+
+        let name =
+            document.getElementById("memberName").value.trim();
+
+        let email =
+            document.getElementById("email").value.trim();
+
+        let phone =
+            document.getElementById("phone").value.trim();
+
+
+        if (name === "") {
+
+            alert("Please enter member name");
+
+            return;
+        }
+
+
+        if (email === "") {
+
+            alert("Please enter email");
+
+            return;
+        }
+
+
+        if (!email.includes("@") ||
+            !email.includes(".")) {
+
+            alert("Please enter a valid email");
+
+            return;
+        }
+
+
+        if (phone === "") {
+
+            alert("Please enter phone number");
+
+            return;
+        }
+
+
+        if (!/^\d{10}$/.test(phone)) {
+
+            alert("Phone number must contain 10 digits");
+
+            return;
+        }
+
+
+        let member = {
+
+            name: name,
+
+            email: email,
+
+            phone: phone
+
+        };
+
+
+        fetch("/api/members", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json"
+
+            },
+
+            body: JSON.stringify(member)
+
+        })
+
+        .then(response => response.json())
+
+        .then(() => {
+
+            alert("Member added successfully");
+
+            document.getElementById("memberName").value = "";
+
+            document.getElementById("email").value = "";
+
+            document.getElementById("phone").value = "";
+
+            loadMembers();
+
+        })
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Unable to add member");
+
+        });
+
+    }
+
+
+
+    function deleteMember(id) {
+
+        let confirmDelete =
+            confirm("Are you sure you want to delete this member?");
+
+
+        if (!confirmDelete) {
+
+            return;
+        }
+
+
+        fetch("/api/members/" + id, {
+
+            method: "DELETE"
+
+        })
+
+        .then(response => response.text())
+
+        .then(message => {
+
+            alert(message);
+
+            loadMembers();
+
+        })
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Unable to delete member");
+
+        });
+
+    }
+
+
+
+    // =========================
+    // LOAD DATA
+    // =========================
+
+
+    loadBooks();
+
+    loadMembers();
+
+
+</script>
+
+
+</body>
+
+</html>
